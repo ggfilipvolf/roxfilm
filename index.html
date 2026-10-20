@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&family=Montserrat:wght@800&display=swap&subset=latin-ext" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v=6">
+<link rel="stylesheet" href="assets/css/site.css?v=7">
 </head>
 <body>
 <a class="sr" href="#obsah">Přeskočit na obsah</a>
@@ -39,7 +39,8 @@
       <picture><source media="(max-width:759px)" srcset="assets/hero/poster-m.jpg"><img class="hero__poster" src="assets/hero/poster.jpg" alt="Kamera RED Komodo-X s objektivem DZOFilm Arles" fetchpriority="high"></picture>
       <canvas class="hero__canvas" aria-hidden="true"></canvas>
     </div>
-    <div class="hero__reel" aria-hidden="true"><video muted loop playsinline preload="none" data-src="media/showreel.mp4" poster="media/showreel.jpg"></video></div>
+    <div class="hero__reel" aria-hidden="true"><video muted loop playsinline preload="none" data-src="media/showreel.mp4" data-src-m="media/showreel-m.mp4" poster="media/showreel.jpg"></video></div>
+    <canvas class="hero__xc" aria-hidden="true"></canvas>
     <div class="hero__shade"></div>
     <div class="bar" aria-hidden="true"><span class="bar__l">RED Komodo-X · Arles 35 · T1.4</span><span class="rec"><i class="rec-dot"></i>REC</span><span class="tc">00:00:00:00</span></div>
     <div class="hero__copy">
@@ -301,6 +302,6 @@
   </div>
 </div>
 <script src="assets/js/lenis.min.js" defer></script>
-<script src="assets/js/site.js?v=6" defer></script>
+<script src="assets/js/site.js?v=7" defer></script>
 </body>
 </html>

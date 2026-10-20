@@ -130,6 +130,8 @@
       hero.classList.add('is-ready');
     }
     addEventListener('resize', size);
+    addEventListener('load', size);
+    if ('ResizeObserver' in window) new ResizeObserver(size).observe(cam);
     size();
 
     // jemné natočení kamery za myší – scéna reaguje
@@ -141,7 +143,9 @@
     const reel = $('.hero__reel', hero), reelV = $('video', reel);
     const end = $('.hero__end', hero), tc = $('.tc', hero);
     let reelLoaded = false;
-    const xPath = window.CSS && CSS.supports && (CSS.supports('clip-path', 'path("M0 0L1 0L1 1Z")') || CSS.supports('-webkit-clip-path', 'path("M0 0L1 0L1 1Z")'));
+    const xc = $('.hero__xc', hero), xctx = xc.getContext('2d');
+    const reelPoster = new Image(); reelPoster.src = reelV.getAttribute('poster');
+    if (small && reelV.dataset.srcM) reelV.dataset.src = reelV.dataset.srcM;
 
     heroTick = y => {
       const total = hero.offsetHeight - VH;
@@ -178,26 +182,39 @@
       fmR.style.transform = `translate3d(${((joinR - leftR) * t).toFixed(1)}px,-50%,0)`;
       focus.style.opacity = Math.min(range(p, 0.24, 0.3), 1 - range(p, 0.6, 0.64));
 
-      if (p > 0.4 && !reelLoaded) { reelV.src = reelV.dataset.src; reelV.load(); reelLoaded = true; }
+      if (p > 0.12 && !reelLoaded) { reelV.src = reelV.dataset.src; reelV.load(); reelLoaded = true; }
       const g = range(p, 0.62, 0.92);
       const ge = g * g * (3 - 2 * g);
       const sF = Math.max(innerWidth / 38, VH / 200);   // měřítko, kdy X pokryje celou obrazovku
       const sc = s0 * Math.pow(sF / s0, ge);
       const ox = 158 - 57 * ge;                         // poloviny do sebe zaklesnou, ať střed zůstane plný
       const vis = range(p, 0.58, 0.62);
-      reel.style.opacity = vis;
-      if (g >= 1) { reel.style.clipPath = 'none'; reel.style.webkitClipPath = 'none'; }
-      else if (xPath) {
-        const x0 = cx - ((144 + ox) / 2) * sc, y0 = cy - 124 * sc;
-        const P = pts => 'M' + pts.map(([x, y]) => `${(x0 + x * sc).toFixed(1)} ${(y0 + y * sc).toFixed(1)}`).join('L') + 'Z';
-        const d = `path('${P([[0,0],[123,0],[144,124],[123,248],[0,248],[100,124]])}${P([[ox+22,0],[ox+139,0],[ox+42,124],[ox+139,248],[ox+22,248],[ox,124]])}')`;
-        reel.style.clipPath = d; reel.style.webkitClipPath = d;
-      } else {
-        const cp = `circle(${ge * 80}% at 50% 50%)`;
-        reel.style.clipPath = cp; reel.style.webkitClipPath = cp;
-      }
+      const showFull = g >= 1;
+      // celé video až po přechodu: kamera se schová, pod ní běží showreel
+      cam.style.visibility = showFull ? 'hidden' : '';
       if (vis > 0.01) { if (reelV.paused) reelV.play().catch(() => {}); }
       else if (!reelV.paused) reelV.pause();
+      // X přechod kreslíme do vlastního plátna (spolehlivé v Safari i na iPhonu)
+      if (vis > 0.001 && !showFull) {
+        const dpr = Math.min(devicePixelRatio || 1, 1.5);
+        const W = Math.round(innerWidth * dpr), Hh = Math.round(VH * dpr);
+        if (xc.width !== W || xc.height !== Hh) { xc.width = W; xc.height = Hh; }
+        xctx.clearRect(0, 0, W, Hh);
+        const srcEl = reelV.readyState >= 2 ? reelV : (reelPoster.complete && reelPoster.naturalWidth ? reelPoster : null);
+        const x0 = (cx - ((144 + ox) / 2) * sc) * dpr, y0 = (cy - 124 * sc) * dpr, k = sc * dpr;
+        const path = new Path2D();
+        const add = pts => { pts.forEach(([x, y], j) => j ? path.lineTo(x0 + x * k, y0 + y * k) : path.moveTo(x0 + x * k, y0 + y * k)); path.closePath(); };
+        add([[0,0],[123,0],[144,124],[123,248],[0,248],[100,124]]);
+        add([[ox+22,0],[ox+139,0],[ox+42,124],[ox+139,248],[ox+22,248],[ox,124]]);
+        xctx.save(); xctx.globalAlpha = vis; xctx.clip(path);
+        if (srcEl) {
+          const iw = srcEl.videoWidth || srcEl.naturalWidth, ih = srcEl.videoHeight || srcEl.naturalHeight;
+          const f = Math.max(W / iw, Hh / ih), w = iw * f, h = ih * f;
+          xctx.drawImage(srcEl, (W - w) / 2, (Hh - h) / 2, w, h);
+        } else { xctx.fillStyle = '#F2F0EB'; xctx.fillRect(0, 0, W, Hh); }
+        xctx.restore();
+        xc.style.visibility = 'visible';
+      } else if (xc.style.visibility !== 'hidden') { xctx.clearRect(0, 0, xc.width, xc.height); xc.style.visibility = 'hidden'; }
       const eo = range(p, 0.9, 0.98);
       end.style.opacity = eo; end.classList.toggle('is-on', eo > 0.5);
     };

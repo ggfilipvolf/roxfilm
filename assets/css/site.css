@@ -75,13 +75,14 @@ p{margin:0}
 /* ---------- HERO: scroll kamera ---------- */
 .hero{position:relative;height:430vh;background:#000}
 .hero__stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#000}
-.hero__cam{position:absolute;inset:-2%;will-change:transform}
+.hero__cam{position:absolute;inset:-2%;z-index:1;will-change:transform}
 .hero__canvas,.hero__poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero__poster{transition:opacity .6s}
 .hero.is-ready .hero__poster{opacity:0}
-.hero__reel{position:absolute;inset:0;opacity:0;clip-path:circle(0% at 50% 50%);-webkit-clip-path:circle(0% at 50% 50%);will-change:clip-path}
+.hero__reel{position:absolute;inset:0;z-index:0;background:#000}
+.hero__xc{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;visibility:hidden}
 .hero__reel video{width:100%;height:100%;object-fit:cover}
-.hero__shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,0) 62%);pointer-events:none}
+.hero__shade{position:absolute;inset:0;z-index:3;background:linear-gradient(90deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,0) 62%);pointer-events:none}
 .bar{position:absolute;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--gutter);color:var(--g50);z-index:3;font:500 10.5px/1 var(--f-mono);letter-spacing:.22em;text-transform:uppercase;background:linear-gradient(0deg,rgba(0,0,0,.7),transparent)}
 .bar>span{flex:1}
 .bar .rec{text-align:center}

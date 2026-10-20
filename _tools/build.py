@@ -8,7 +8,7 @@ import json, os, html
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META = json.load(open(os.path.join(ROOT, '_tools', 'media.json')))  # slug -> {w,h,dur,full}
 E = html.escape
-V = '6'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
+V = '7'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
 
 PHONE = '777 272 802'; PHONE_TEL = '+420777272802'
 EMAIL = 'ggfilipvolf@gmail.com'
@@ -244,7 +244,8 @@ def index():
       <picture><source media="(max-width:759px)" srcset="assets/hero/poster-m.jpg"><img class="hero__poster" src="assets/hero/poster.jpg" alt="Kamera RED Komodo-X s objektivem DZOFilm Arles" fetchpriority="high"></picture>
       <canvas class="hero__canvas" aria-hidden="true"></canvas>
     </div>
-    <div class="hero__reel" aria-hidden="true"><video muted loop playsinline preload="none" data-src="media/showreel.mp4" poster="media/showreel.jpg"></video></div>
+    <div class="hero__reel" aria-hidden="true"><video muted loop playsinline preload="none" data-src="media/showreel.mp4" data-src-m="media/showreel-m.mp4" poster="media/showreel.jpg"></video></div>
+    <canvas class="hero__xc" aria-hidden="true"></canvas>
     <div class="hero__shade"></div>
     <div class="bar" aria-hidden="true"><span class="bar__l">RED Komodo-X · Arles 35 · T1.4</span><span class="rec"><i class="rec-dot"></i>REC</span><span class="tc">00:00:00:00</span></div>
     <div class="hero__copy">
