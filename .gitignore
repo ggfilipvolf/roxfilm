@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+# nezašifrovaný zdroj půjčovny – nikdy necommitovat
+_tools/pujcovna-src.html
+_tools/out/
+*.zip

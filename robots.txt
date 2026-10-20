@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /pujcovna.html
+
+Sitemap: https://www.roxfilm.cz/sitemap.xml

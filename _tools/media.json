@@ -1,0 +1,900 @@
+{
+ "opatija-angels": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 86.1,
+  "full": true
+ },
+ "porsche": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 58.8,
+  "full": true
+ },
+ "sarka-stiborova": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 45.4,
+  "full": true
+ },
+ "ben-cristovao-omluva": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 89.5,
+  "full": true
+ },
+ "tesco-velikonoce": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 154.7,
+  "full": true
+ },
+ "semspoko": {
+  "w": 1920,
+  "h": 800,
+  "dur": 159.7,
+  "full": true
+ },
+ "hopa-group": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 50.3,
+  "full": true
+ },
+ "yzomandias": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 122.9,
+  "full": true
+ },
+ "3d-art": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 209.6,
+  "full": true
+ },
+ "chorvatsko-spot": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 16.1,
+  "full": true
+ },
+ "day-vlog": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 644.4,
+  "full": true
+ },
+ "vlog-workshop": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 1512.4,
+  "full": true
+ },
+ "vut-opera": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 809.9,
+  "full": true
+ },
+ "sergei-barracuda": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 224.4,
+  "full": true
+ },
+ "pandies": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 21.0,
+  "full": true
+ },
+ "alux-family": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 20.7,
+  "full": true
+ },
+ "alux-1": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 141.9,
+  "full": true
+ },
+ "alux-2": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 119.6,
+  "full": true
+ },
+ "alux-3": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 130.1,
+  "full": true
+ },
+ "alux-4": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 80.0,
+  "full": true
+ },
+ "alux-5": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 47.9,
+  "full": true
+ },
+ "alux-6": {
+  "w": 1920,
+  "h": 1080,
+  "dur": 84.7,
+  "full": true
+ },
+ "alux-r01": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 20.1,
+  "full": true
+ },
+ "alux-r02": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 10.5,
+  "full": true
+ },
+ "alux-r03": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 6.6,
+  "full": true
+ },
+ "alux-r04": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 11.8,
+  "full": true
+ },
+ "alux-r05": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 9.5,
+  "full": true
+ },
+ "alux-r06": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 18.0,
+  "full": true
+ },
+ "alux-r07": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 10.0,
+  "full": true
+ },
+ "alux-r08": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 7.8,
+  "full": true
+ },
+ "alux-r09": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 42.8,
+  "full": true
+ },
+ "alux-r10": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 18.3,
+  "full": true
+ },
+ "kras-r1": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 11.6,
+  "full": true
+ },
+ "kras-r2": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 8.5,
+  "full": true
+ },
+ "kras-r3": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 15.4,
+  "full": true
+ },
+ "kras-r4": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 11.6,
+  "full": true
+ },
+ "kras-r5": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 11.2,
+  "full": true
+ },
+ "kras-r6": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 20.3,
+  "full": true
+ },
+ "reel-01": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 22.1,
+  "full": true
+ },
+ "reel-02": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 22.3,
+  "full": true
+ },
+ "reel-03": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 31.2,
+  "full": true
+ },
+ "reel-04": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 46.7,
+  "full": true
+ },
+ "reel-05": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 31.7,
+  "full": true
+ },
+ "reel-06": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 24.3,
+  "full": true
+ },
+ "reel-07": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 13.9,
+  "full": true
+ },
+ "reel-08": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 11.6,
+  "full": true
+ },
+ "reel-09": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 22.1,
+  "full": true
+ },
+ "reel-10": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 21.5,
+  "full": true
+ },
+ "reel-11": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 14.4,
+  "full": true
+ },
+ "reel-12": {
+  "w": 1080,
+  "h": 1920,
+  "dur": 23.2,
+  "full": true
+ },
+ "lada/auto": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 45.9,
+  "full": true
+ },
+ "lada/deset-milionu": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 57.0,
+  "full": true
+ },
+ "lada/rozchod": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 41.5,
+  "full": true
+ },
+ "lada/teaser-flip": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 25.6,
+  "full": true
+ },
+ "lada/teaser-zavody": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 31.8,
+  "full": true
+ },
+ "lada/vlog": {
+  "w": 1280,
+  "h": 720,
+  "vertical": 0,
+  "dur": 0,
+  "full": false
+ },
+ "lada/bonita": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 58.4,
+  "full": true
+ },
+ "lada/teaser-kojetin": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 12.8,
+  "full": true
+ },
+ "balonio/hala": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 20.8,
+  "full": true
+ },
+ "balonio/lr-realizace": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 23.1,
+  "full": true
+ },
+ "balonio/recenze-artis": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 49.5,
+  "full": true
+ },
+ "balonio/recenze-losterie": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 84.1,
+  "full": true
+ },
+ "balonio/ples": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 51.7,
+  "full": true
+ },
+ "balonio/recenze-sms": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 60.3,
+  "full": true
+ },
+ "balonio/neon": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 96.7,
+  "full": true
+ },
+ "balonio/recenze-borgo": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 40.8,
+  "full": true
+ },
+ "drive/az-tower": {
+  "w": 1280,
+  "h": 720,
+  "vertical": 0,
+  "dur": 60.0,
+  "full": true
+ },
+ "drive/ec-parfums": {
+  "w": 1280,
+  "h": 720,
+  "vertical": 0,
+  "dur": 59.9,
+  "full": true
+ },
+ "drive/gymnazium-blansko": {
+  "w": 1280,
+  "h": 720,
+  "vertical": 0,
+  "dur": 60.0,
+  "full": true
+ },
+ "drive/kerndl-tesco": {
+  "w": 1280,
+  "h": 720,
+  "vertical": 0,
+  "dur": 60.0,
+  "full": true
+ },
+ "drive/promoce-fch": {
+  "w": 1280,
+  "h": 720,
+  "vertical": 0,
+  "dur": 60.0,
+  "full": true
+ },
+ "drive/r-ai-tvorba": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 15.0,
+  "full": true
+ },
+ "drive/r-attila": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 46.9,
+  "full": true
+ },
+ "drive/r-eli-oslava": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 66.9,
+  "full": true
+ },
+ "drive/r-eli-prekvapko": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 46.9,
+  "full": true
+ },
+ "drive/r-gurdau": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 50.0,
+  "full": true
+ },
+ "drive/r-infina": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 22.1,
+  "full": true
+ },
+ "drive/r-influland": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 49.3,
+  "full": true
+ },
+ "drive/r-kora-1": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 39.4,
+  "full": true
+ },
+ "drive/r-kora-3": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 21.1,
+  "full": true
+ },
+ "drive/r-reklamni": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 19.4,
+  "full": true
+ },
+ "drive/r-svatojanska-noc": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 81.7,
+  "full": true
+ },
+ "drive/r-vecirek": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 45.8,
+  "full": true
+ },
+ "drive/r-villa-naya-1": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 14.0,
+  "full": true
+ },
+ "drive/r-villa-naya-2": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 16.2,
+  "full": true
+ },
+ "drive/r-villa-naya-3": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 19.0,
+  "full": true
+ },
+ "drive/r-villa-naya-4": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 13.0,
+  "full": true
+ },
+ "drive/r-villa-naya-5": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 20.1,
+  "full": true
+ },
+ "drive/r-villa-oresin": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 46.7,
+  "full": true
+ },
+ "drive/r-vut-medailonek": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 40.6,
+  "full": true
+ },
+ "drive/r-vzdelavaci": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 48.7,
+  "full": true
+ },
+ "drive/rich-fouad-lets-slide": {
+  "w": 1280,
+  "h": 540,
+  "vertical": 0,
+  "dur": 60.0,
+  "full": true
+ },
+ "drive/richie-flawless-ice": {
+  "w": 1280,
+  "h": 720,
+  "vertical": 0,
+  "dur": 60.0,
+  "full": true
+ },
+ "drive/villa-naya": {
+  "w": 1280,
+  "h": 720,
+  "vertical": 0,
+  "dur": 86.0,
+  "full": true
+ },
+ "drive/zs-erbenova": {
+  "w": 1280,
+  "h": 720,
+  "vertical": 0,
+  "dur": 60.0,
+  "full": true
+ },
+ "balonio-ads/01": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 17.9,
+  "full": true
+ },
+ "balonio-ads/02": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 44.6,
+  "full": true
+ },
+ "balonio-ads/03a": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 35.1,
+  "full": true
+ },
+ "balonio-ads/04": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 22.5,
+  "full": true
+ },
+ "balonio-ads/05": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 23.1,
+  "full": true
+ },
+ "balonio-ads/06": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 10.7,
+  "full": true
+ },
+ "balonio-ads/07": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 12.5,
+  "full": true
+ },
+ "balonio-ads/08": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 9.1,
+  "full": true
+ },
+ "balonio-ads/09": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 20.8,
+  "full": true
+ },
+ "balonio-ads/10": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 19.7,
+  "full": true
+ },
+ "balonio-ads/11": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 12.5,
+  "full": true
+ },
+ "balonio-ads/12": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 13.0,
+  "full": true
+ },
+ "balonio-ads/branding": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 16.0,
+  "full": true
+ },
+ "balonio-ads/explainer": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 34.8,
+  "full": true
+ },
+ "balonio-ads/oktagon": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 6.3,
+  "full": true
+ },
+ "balonio-ads/strom": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 15.3,
+  "full": true
+ },
+ "balonio-ads/svatba-1": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 11.4,
+  "full": true
+ },
+ "balonio-ads/svatba-2": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 10.8,
+  "full": true
+ },
+ "balonio-ads/ugc-1": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 14.4,
+  "full": true
+ },
+ "balonio-ads/ugc-2": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 8.9,
+  "full": true
+ },
+ "balonio-ads/ugc-3": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 10.9,
+  "full": true
+ },
+ "balonio-ads/ugc-4": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 27.4,
+  "full": true
+ },
+ "balonio-ads/ugc-doporuceni": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 30.8,
+  "full": true
+ },
+ "balonio-ads/ugc-vzdavam": {
+  "w": 540,
+  "h": 960,
+  "vertical": 1,
+  "dur": 28.2,
+  "full": true
+ },
+ "kras/dron-1": {
+  "vertical": 1,
+  "dur": 20.3,
+  "full": true
+ },
+ "kras/dron-2": {
+  "vertical": 1,
+  "dur": 9.8,
+  "full": true
+ },
+ "kras/dron-3": {
+  "vertical": 1,
+  "dur": 8.5,
+  "full": true
+ },
+ "kras/dron-4": {
+  "vertical": 1,
+  "dur": 7.8,
+  "full": true
+ },
+ "kras/dron-5": {
+  "vertical": 1,
+  "dur": 12.9,
+  "full": true
+ },
+ "kras/dron-6": {
+  "vertical": 1,
+  "dur": 11.6,
+  "full": true
+ },
+ "kras/krasonos-1": {
+  "vertical": 1,
+  "dur": 11.6,
+  "full": true
+ },
+ "kras/krasonos-2": {
+  "vertical": 1,
+  "dur": 12.3,
+  "full": true
+ },
+ "kras/krasonos-3": {
+  "vertical": 1,
+  "dur": 11.2,
+  "full": true
+ },
+ "kras/krasonos-4": {
+  "vertical": 1,
+  "dur": 9.7,
+  "full": true
+ },
+ "kras/krasonos-5": {
+  "vertical": 1,
+  "dur": 8.7,
+  "full": true
+ },
+ "kras/krasonos-6": {
+  "vertical": 1,
+  "dur": 8.5,
+  "full": true
+ },
+ "kras/krasonos-7": {
+  "vertical": 1,
+  "dur": 15.3,
+  "full": true
+ },
+ "polepim/audi-1-broll-warrior": {
+  "vertical": 1,
+  "dur": 22.5,
+  "full": true
+ },
+ "polepim/polepim-1": {
+  "vertical": 1,
+  "dur": 9.0,
+  "full": true
+ },
+ "polepim/polepim-10": {
+  "vertical": 1,
+  "dur": 23.1,
+  "full": true
+ },
+ "polepim/polepim-11": {
+  "vertical": 1,
+  "dur": 22.5,
+  "full": true
+ },
+ "polepim/polepim-12": {
+  "vertical": 1,
+  "dur": 23.6,
+  "full": true
+ },
+ "polepim/polepim-2-predni-sklo-chameleon": {
+  "vertical": 1,
+  "dur": 20.0,
+  "full": true
+ },
+ "polepim/polepim-5": {
+  "vertical": 1,
+  "dur": 25.1,
+  "full": true
+ },
+ "polepim/polepim-6": {
+  "vertical": 1,
+  "dur": 13.2,
+  "full": true
+ },
+ "polepim/polepim-8": {
+  "vertical": 1,
+  "dur": 29.9,
+  "full": true
+ },
+ "polepim/polepim-9": {
+  "vertical": 1,
+  "dur": 22.4,
+  "full": true
+ }
+}
