@@ -141,6 +141,7 @@
     const reel = $('.hero__reel', hero), reelV = $('video', reel);
     const end = $('.hero__end', hero), tc = $('.tc', hero);
     let reelLoaded = false;
+    const xPath = window.CSS && CSS.supports && (CSS.supports('clip-path', 'path("M0 0L1 0L1 1Z")') || CSS.supports('-webkit-clip-path', 'path("M0 0L1 0L1 1Z")'));
 
     heroTick = y => {
       const total = hero.offsetHeight - VH;
@@ -164,21 +165,38 @@
       copy.style.opacity = o1; copy.style.transform = `translate3d(0,${(1 - o1) * -24}px,0)`;
       if (hint) hint.style.opacity = o1;
 
-      // značky ostření se sjedou k objektivu
-      const fo = Math.min(range(p, 0.26, 0.32), 1 - range(p, 0.58, 0.66));
-      focus.style.opacity = fo;
-      const t = ease(range(p, 0.28, 0.52));
-      const span = innerWidth / 2 - parseFloat(getComputedStyle(fmL).left) - fmL.getBoundingClientRect().width;
-      const stop = small ? innerWidth * 0.22 : Math.min(innerWidth * 0.2, 300);
-      const dx = Math.max(0, span - stop) * t;
-      fmL.style.transform = `translate3d(${dx}px,-50%,0)`;
-      fmR.style.transform = `translate3d(${-dx}px,-50%,0)`;
+      // dvě poloviny X z loga se sjedou, spojí se v logo a X vyroste do showreelu
+      const csL = getComputedStyle(fmL), csR = getComputedStyle(fmR);
+      const wL = parseFloat(csL.width), wR = parseFloat(csR.width);
+      const leftL = parseFloat(csL.left), leftR = innerWidth - parseFloat(csR.right) - wR;
+      const s0 = wL / 144;                              // px na jednotku loga
+      const cx = innerWidth / 2, cy = VH / 2;
+      const t = ease(range(p, 0.28, 0.56));
+      const joinL = cx - 151 * s0;                      // (144 + 158) / 2 = 151 → střed mezery mezi hroty
+      const joinR = joinL + 158 * s0;
+      fmL.style.transform = `translate3d(${((joinL - leftL) * t).toFixed(1)}px,-50%,0)`;
+      fmR.style.transform = `translate3d(${((joinR - leftR) * t).toFixed(1)}px,-50%,0)`;
+      focus.style.opacity = Math.min(range(p, 0.24, 0.3), 1 - range(p, 0.6, 0.64));
 
-      if (p > 0.45 && !reelLoaded) { reelV.src = reelV.dataset.src; reelV.load(); reelLoaded = true; }
-      const ir = ease(range(p, 0.76, 0.93));
-      const cp = `circle(${ir * 80}% at 50% 50%)`;
-      reel.style.clipPath = cp; reel.style.webkitClipPath = cp;
-      if (ir > 0.01) { if (reelV.paused) reelV.play().catch(() => {}); }
+      if (p > 0.4 && !reelLoaded) { reelV.src = reelV.dataset.src; reelV.load(); reelLoaded = true; }
+      const g = range(p, 0.62, 0.92);
+      const ge = g * g * (3 - 2 * g);
+      const sF = Math.max(innerWidth / 38, VH / 200);   // měřítko, kdy X pokryje celou obrazovku
+      const sc = s0 * Math.pow(sF / s0, ge);
+      const ox = 158 - 57 * ge;                         // poloviny do sebe zaklesnou, ať střed zůstane plný
+      const vis = range(p, 0.58, 0.62);
+      reel.style.opacity = vis;
+      if (g >= 1) { reel.style.clipPath = 'none'; reel.style.webkitClipPath = 'none'; }
+      else if (xPath) {
+        const x0 = cx - ((144 + ox) / 2) * sc, y0 = cy - 124 * sc;
+        const P = pts => 'M' + pts.map(([x, y]) => `${(x0 + x * sc).toFixed(1)} ${(y0 + y * sc).toFixed(1)}`).join('L') + 'Z';
+        const d = `path('${P([[0,0],[123,0],[144,124],[123,248],[0,248],[100,124]])}${P([[ox+22,0],[ox+139,0],[ox+42,124],[ox+139,248],[ox+22,248],[ox,124]])}')`;
+        reel.style.clipPath = d; reel.style.webkitClipPath = d;
+      } else {
+        const cp = `circle(${ge * 80}% at 50% 50%)`;
+        reel.style.clipPath = cp; reel.style.webkitClipPath = cp;
+      }
+      if (vis > 0.01) { if (reelV.paused) reelV.play().catch(() => {}); }
       else if (!reelV.paused) reelV.pause();
       const eo = range(p, 0.9, 0.98);
       end.style.opacity = eo; end.classList.toggle('is-on', eo > 0.5);

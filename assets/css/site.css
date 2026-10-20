@@ -79,7 +79,7 @@ p{margin:0}
 .hero__canvas,.hero__poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero__poster{transition:opacity .6s}
 .hero.is-ready .hero__poster{opacity:0}
-.hero__reel{position:absolute;inset:0;clip-path:circle(0% at 50% 50%);-webkit-clip-path:circle(0% at 50% 50%);will-change:clip-path}
+.hero__reel{position:absolute;inset:0;opacity:0;clip-path:circle(0% at 50% 50%);-webkit-clip-path:circle(0% at 50% 50%);will-change:clip-path}
 .hero__reel video{width:100%;height:100%;object-fit:cover}
 .hero__shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,0) 62%);pointer-events:none}
 .bar{position:absolute;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--gutter);color:var(--g50);z-index:3;font:500 10.5px/1 var(--f-mono);letter-spacing:.22em;text-transform:uppercase;background:linear-gradient(0deg,rgba(0,0,0,.7),transparent)}
@@ -96,7 +96,7 @@ p{margin:0}
 @keyframes hint{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 /* značky ostření – polovinky X z loga zaostří na objektiv */
 .focus{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0}
-.fm{position:absolute;top:50%;width:clamp(18px,2vw,30px);height:auto;color:var(--paper);transform:translateY(-50%)}
+.fm{position:absolute;top:50%;width:clamp(22px,2.5vw,38px);height:auto;color:var(--paper);transform:translateY(-50%)}
 .fm--l{left:var(--gutter)}
 .fm--r{right:var(--gutter)}
 .hero__end{position:absolute;left:var(--gutter);right:var(--gutter);bottom:clamp(96px,13vh,140px);z-index:4;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;opacity:0;pointer-events:none}
