@@ -16,7 +16,7 @@ Složka `_tools` obsahuje jen generátor; nezašifrovaný zdroj půjčovny se ni
 ## Nasazení
 1. Na GitHubu vytvořte repozitář `roxfilm-web` a nahrajte do něj obsah této složky (`git init`, `git add .`, `git commit`, `git push`).
 2. Settings → Pages → Source: *Deploy from a branch*, větev `main`, složka `/ (root)`.
-3. Custom domain: `www.roxfilm.cz` (soubor `CNAME` už je připravený), zapněte *Enforce HTTPS*.
+3. Nejdřív si web projděte na `https://ggfilipvolf.github.io/roxfilm/`. Až bude vše OK, v Settings → Pages vyplňte Custom domain `www.roxfilm.cz` (GitHub sám vytvoří soubor `CNAME`) a zapněte *Enforce HTTPS*.
 4. U domény (Forpsi) nastavte DNS:
    - `www` → CNAME → `ggfilipvolf.github.io`
    - kořen `roxfilm.cz` → A záznamy `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
