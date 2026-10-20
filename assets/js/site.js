@@ -60,31 +60,62 @@
     const N = small ? +hero.dataset.framesM : +hero.dataset.framesD;
     const base = small ? hero.dataset.pathM : hero.dataset.pathD;
     const frames = new Array(N);
-    let drawn = -1, target = 0, cur = 0;
+    // ostré snímky pro velké a retina obrazovky (načítají se až po rychlé sadě)
+    const NH = +hero.dataset.framesH || 0, baseH = hero.dataset.pathH;
+    const wantHD = !small && NH === N && innerWidth * Math.min(devicePixelRatio || 1, 2) > 1700;
+    const hd = new Array(N);
+    let drawn = null, target = 0, cur = 0;
     const src = i => `${base}${String(i + 1).padStart(3, '0')}.webp`;
+    const srcH = i => `${baseH}${String(i + 1).padStart(3, '0')}.webp`;
     function load(i) {
       if (frames[i] !== undefined) return;
       frames[i] = null;
       const im = new Image();
-      im.onload = () => { frames[i] = im; if (drawn < 0) { drawn = -2; draw(Math.round(cur), true); } };
+      im.onload = () => { frames[i] = im; if (!drawn) draw(Math.round(cur), true); };
       im.src = src(i);
+    }
+    function loadH(i) {
+      if (hd[i] !== undefined) return;
+      hd[i] = null;
+      const im = new Image();
+      im.onload = () => { hd[i] = im; if (Math.abs(i - Math.round(cur)) < 2) draw(Math.round(cur), true); };
+      im.src = srcH(i);
     }
     const order = [];
     [16, 8, 4, 2, 1].forEach(st => { for (let i = 0; i < N; i += st) if (!order.includes(i)) order.push(i); });
-    let qi = 0;
-    function pump() { for (let k = 0; k < 8 && qi < order.length; k++) load(order[qi++]); if (qi < order.length) setTimeout(pump, 30); }
+    let qi = 0, hi = 0;
+    function pump() {
+      for (let k = 0; k < 8 && qi < order.length; k++) load(order[qi++]);
+      if (qi < order.length) return setTimeout(pump, 30);
+      if (wantHD) pumpH();
+    }
+    function pumpH() {
+      // nejdřív snímky kolem aktuální pozice, pak zbytek
+      const c = Math.round(cur);
+      let best = -1, bd = 1e9;
+      for (let i = 0; i < N; i++) if (hd[i] === undefined) { const d = Math.abs(i - c); if (d < bd) { bd = d; best = i; } }
+      if (best < 0) return;
+      for (let k = 0; k < 4; k++) { const i = best + k; if (i < N) loadH(i); }
+      setTimeout(pumpH, 60);
+    }
     load(0); pump();
 
     function nearest(i) {
+      if (hd[i]) return hd[i];
       if (frames[i]) return frames[i];
-      for (let d = 1; d < N; d++) { if (frames[i - d]) return frames[i - d]; if (frames[i + d]) return frames[i + d]; }
+      for (let d = 1; d < N; d++) {
+        if (hd[i - d] && d < 2) return hd[i - d];
+        if (frames[i - d]) return frames[i - d];
+        if (frames[i + d]) return frames[i + d];
+      }
       return null;
     }
     function size() {
       const dpr = Math.min(devicePixelRatio || 1, 2);
       canvas.width = Math.round(cam.clientWidth * dpr);
       canvas.height = Math.round(cam.clientHeight * dpr);
-      drawn = -2; draw(Math.round(cur), true);
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+      drawn = null; draw(Math.round(cur), true);
     }
     function draw(i, force) {
       const im = nearest(i);
@@ -92,10 +123,10 @@
       if (!force && im === drawn) return;
       drawn = im;
       const cw = canvas.width, ch = canvas.height;
-      const s = Math.max(cw / im.naturalWidth, ch / im.naturalHeight) * (small ? 1.04 : 1);
+      const s = Math.max(cw / im.naturalWidth, ch / im.naturalHeight);
       const w = im.naturalWidth * s, h = im.naturalHeight * s;
       ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cw, ch);
-      ctx.drawImage(im, (cw - w) / 2 + (small ? cw * 0.12 : 0), (ch - h) / 2, w, h);
+      ctx.drawImage(im, (cw - w) / 2, (ch - h) / 2, w, h);
       hero.classList.add('is-ready');
     }
     addEventListener('resize', size);

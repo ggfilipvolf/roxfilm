@@ -8,7 +8,7 @@ import json, os, html
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META = json.load(open(os.path.join(ROOT, '_tools', 'media.json')))  # slug -> {w,h,dur,full}
 E = html.escape
-V = '3'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
+V = '4'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
 
 PHONE = '777 272 802'; PHONE_TEL = '+420777272802'
 EMAIL = 'ggfilipvolf@gmail.com'
@@ -238,10 +238,10 @@ def index():
               ''), nav(True)]
     # HERO
     o.append(f'''<main id="obsah">
-<section class="hero" id="top" data-frames-d="193" data-frames-m="97" data-path-d="assets/hero/d/" data-path-m="assets/hero/m/" aria-label="Úvod">
+<section class="hero" id="top" data-frames-d="193" data-frames-m="97" data-path-d="assets/hero/d/" data-path-m="assets/hero/m/" data-frames-h="193" data-path-h="assets/hero/h/" aria-label="Úvod">
   <div class="hero__stage">
     <div class="hero__cam">
-      <img class="hero__poster" src="assets/hero/poster.jpg" alt="Kamera RED Komodo-X s objektivem DZOFilm Arles" fetchpriority="high">
+      <picture><source media="(max-width:759px)" srcset="assets/hero/poster-m.jpg"><img class="hero__poster" src="assets/hero/poster.jpg" alt="Kamera RED Komodo-X s objektivem DZOFilm Arles" fetchpriority="high"></picture>
       <canvas class="hero__canvas" aria-hidden="true"></canvas>
     </div>
     <div class="hero__reel" aria-hidden="true"><video muted loop playsinline preload="none" data-src="media/showreel.mp4" poster="media/showreel.jpg"></video></div>
