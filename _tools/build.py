@@ -8,7 +8,7 @@ import json, os, html
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META = json.load(open(os.path.join(ROOT, '_tools', 'media.json')))  # slug -> {w,h,dur,full}
 E = html.escape
-V = '4'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
+V = '5'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
 
 PHONE = '777 272 802'; PHONE_TEL = '+420777272802'
 EMAIL = 'ggfilipvolf@gmail.com'

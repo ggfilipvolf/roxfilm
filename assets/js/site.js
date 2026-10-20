@@ -274,101 +274,136 @@
     }
   });
 
-  /* ---------- deck: karusel (táhnutí, trackpad, šipky, sám se točí) ---------- */
+  /* ---------- deck: karusel (fyzika jako na iPhonu: táhnutí, trackpad, šipky, sám se točí) ---------- */
   $$('[data-deck]').forEach(deck => {
     const stage = $('.deck__stage', deck);
     const cards = $$('.deck__card', deck);
     const count = $('.deck__count b', deck), label = $('.deck__label', deck);
     const n = cards.length;
-    let active = 0, drag = 0, inView = false, hover = false, lastTouch = 0;
-    const cw = () => cards[0].getBoundingClientRect().width || 300;
+    const mod = i => ((i % n) + n) % n;
+    let pos = 0, tpos = 0, inView = false, hover = false, lastTouch = 0, settled = -1, shown = -1, running = false;
+    let cw = 300;
+    const measure = () => { cw = cards[0].offsetWidth || 300; };
+    const vis = cards.map(() => true);
     function layout() {
-      const w = cw(), gap = w * (innerWidth < 700 ? 0.8 : 0.9);
-      cards.forEach((c, i) => {
-        let o = i - active - drag;
-        if (o > n / 2) o -= n; if (o < -n / 2) o += n;
-        const a = Math.abs(o);
+      const gap = cw * (innerWidth < 700 ? 0.8 : 0.9);
+      for (let i = 0; i < n; i++) {
+        let o = i - pos; o = o - n * Math.round(o / n);
+        const a = Math.abs(o), c = cards[i];
+        if (a > 3.6) { if (vis[i]) { c.style.visibility = 'hidden'; vis[i] = false; } continue; }
+        if (!vis[i]) { c.style.visibility = ''; vis[i] = true; }
         const s = 1 - Math.min(a, 3) * 0.12;
         const x = o * gap - Math.sign(o) * Math.max(0, a - 1) * gap * 0.3;
-        c.style.transform = `translate(-50%,-50%) translate3d(${x}px,0,0) rotateY(${clamp(o, -3, 3) * -8}deg) scale(${s})`;
+        c.style.transform = `translate(-50%,-50%) translate3d(${x.toFixed(1)}px,0,0) rotateY(${(clamp(o, -3, 3) * -8).toFixed(2)}deg) scale(${s.toFixed(4)})`;
         c.style.zIndex = String(100 - Math.round(a * 10));
-        c.style.opacity = a > 3.5 ? 0 : 1;
-        c.style.setProperty('--dim', Math.min(a, 2.5) * 0.26);
-        c.classList.toggle('is-active', i === active && drag === 0);
-        c.tabIndex = i === active ? 0 : -1;
-      });
+        c.style.setProperty('--dim', (Math.min(a, 2.5) * 0.26).toFixed(3));
+      }
     }
-    function near(i) { let d = Math.abs(i - active); return Math.min(d, n - d); }
-    function sync() {
-      count.textContent = String(active + 1).padStart(2, '0');
-      label.textContent = cards[active].dataset.label || '';
-      cards.forEach((c, i) => {
+    // videa: hraje jen karta uprostřed, sousedé se jen přednačtou
+    function playActive(i) {
+      cards.forEach((c, k) => {
         const vp = $('.vp', c); if (!vp) return;
-        const d = near(i);
-        if (d <= 3) ensure(vp);
-        if (inView && d <= 2) play(vp); else stop(vp);
+        const d = Math.min(Math.abs(k - i), n - Math.abs(k - i));
+        if (k === i && inView) {
+          const v = ensure(vp);
+          vp.classList.add('is-playing');
+          const go = () => { if (settled !== k || !inView) return; const pr = v.play(); if (pr) pr.catch(() => {}); };
+          go();
+          if (v.readyState < 3) v.addEventListener('canplay', go, { once: true });
+        } else {
+          stop(vp);
+          if (d === 1) { const v = ensure(vp); v.preload = 'auto'; }
+        }
+        c.classList.toggle('is-active', k === i);
+        c.tabIndex = k === i ? 0 : -1;
       });
     }
-    function go(i) { active = ((i % n) + n) % n; drag = 0; layout(); sync(); }
+    function setLabel(i) {
+      if (i === shown) return; shown = i;
+      count.textContent = String(i + 1).padStart(2, '0');
+      label.textContent = cards[i].dataset.label || '';
+    }
+    let dragging = false, wheeling = false, idleT = 0;
+    function loop() {
+      const k = dragging ? 0.5 : 0.14;
+      pos += (tpos - pos) * k;
+      if (Math.abs(tpos - pos) < 0.008) pos = tpos;
+      layout();
+      const act = mod(Math.round(pos));
+      setLabel(act);
+      const still = pos === tpos && !dragging && !wheeling;
+      if (still) {
+        if (settled !== act) { settled = act; playActive(act); }
+        running = false; return;
+      }
+      if (settled !== -1) { settled = -1; cards.forEach(c => c.classList.remove('is-active')); }
+      requestAnimationFrame(loop);
+    }
+    function kick() { if (!running) { running = true; requestAnimationFrame(loop); } }
+    function to(t) { tpos = t; kick(); }
     const poke = () => { lastTouch = performance.now(); };
-    $('.deck__prev', deck).addEventListener('click', () => { poke(); go(active - 1); });
-    $('.deck__next', deck).addEventListener('click', () => { poke(); go(active + 1); });
+    $('.deck__prev', deck).addEventListener('click', () => { poke(); to(Math.round(tpos) - 1); });
+    $('.deck__next', deck).addEventListener('click', () => { poke(); to(Math.round(tpos) + 1); });
     deck.addEventListener('keydown', e => {
-      if (e.key === 'ArrowLeft') { e.preventDefault(); poke(); go(active - 1); }
-      if (e.key === 'ArrowRight') { e.preventDefault(); poke(); go(active + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); poke(); to(Math.round(tpos) - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); poke(); to(Math.round(tpos) + 1); }
     });
     deck.addEventListener('mouseenter', () => hover = true);
     deck.addEventListener('mouseleave', () => hover = false);
 
-    // tažení myší i prstem
-    let down = false, sx = 0, sy = 0, moved = false, horiz = null, t0 = 0;
-    stage.addEventListener('pointerdown', e => { down = true; moved = false; horiz = null; sx = e.clientX; sy = e.clientY; t0 = performance.now(); poke(); });
+    // tažení myší i prstem, se setrvačností
+    let down = false, sx = 0, sy = 0, moved = false, horiz = null, start = 0, lx = 0, lt = 0, vel = 0;
+    stage.addEventListener('pointerdown', e => { down = true; moved = false; horiz = null; sx = lx = e.clientX; sy = e.clientY; lt = performance.now(); vel = 0; start = tpos; poke(); });
     addEventListener('pointermove', e => {
       if (!down) return;
       const dx = e.clientX - sx, dy = e.clientY - sy;
       if (horiz === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) horiz = Math.abs(dx) > Math.abs(dy);
       if (!horiz) return;
-      moved = true; deck.classList.add('is-drag');
-      drag = clamp(-dx / (cw() * 0.9), -4, 4); layout();
+      moved = true; dragging = true; deck.classList.add('is-drag');
+      const now = performance.now(), dt = Math.max(1, now - lt);
+      vel = 0.8 * vel + 0.2 * ((e.clientX - lx) / dt); lx = e.clientX; lt = now;
+      tpos = start - dx / (cw * 0.9); kick();
     }, { passive: true });
     addEventListener('pointerup', () => {
-      if (!down) return; down = false; deck.classList.remove('is-drag');
-      if (moved) {
-        const fast = (performance.now() - t0) < 260 && Math.abs(drag) > 0.12;
-        go(active + (fast ? Math.sign(drag) * Math.max(1, Math.round(Math.abs(drag))) : Math.round(drag)));
-      }
+      if (!down) return; down = false; dragging = false; deck.classList.remove('is-drag');
+      if (moved) { const fling = -vel * 0.35; to(Math.round(tpos + clamp(fling, -6, 6))); }
     });
     stage.addEventListener('click', e => {
       const c = e.target.closest('.deck__card'); if (!c) return;
       if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; return; }
-      const i = cards.indexOf(c);
-      if (i !== active) { e.preventDefault(); e.stopPropagation(); poke(); go(i); }
+      const i = cards.indexOf(c), act = mod(Math.round(tpos));
+      if (i !== act) {
+        e.preventDefault(); e.stopPropagation(); poke();
+        let d = i - act; d = d - n * Math.round(d / n); to(Math.round(tpos) + d);
+      }
     }, true);
 
-    // dva prsty na trackpadu do strany = točení karuselem
-    let wt = null;
+    // dva prsty na trackpadu do strany
     deck.addEventListener('wheel', e => {
       const dx = e.deltaX, dy = e.deltaY;
       if (Math.abs(dx) <= Math.abs(dy) || Math.abs(dx) < 1) return;
       e.preventDefault(); e.stopPropagation(); poke();
-      deck.classList.add('is-wheel');
-      drag = clamp(drag + dx / (cw() * 1.1), -3, 3);
-      if (Math.abs(drag) >= 1) { const st = Math.trunc(drag); active = ((active + st) % n + n) % n; drag -= st; sync(); }
-      layout();
-      clearTimeout(wt);
-      wt = setTimeout(() => { deck.classList.remove('is-wheel'); go(active + Math.round(drag)); }, 140);
+      wheeling = true;
+      tpos += dx / (cw * 1.15);
+      kick();
+      clearTimeout(idleT);
+      idleT = setTimeout(() => { wheeling = false; to(Math.round(tpos)); }, 120);
     }, { passive: false });
 
     // sám se pomalu točí, když se na něj díváte a nesaháte na něj
     setInterval(() => {
-      if (!inView || hover || down || document.hidden || reduce) return;
-      if (performance.now() - lastTouch < 7000) return;
-      go(active + 1);
-    }, 3800);
+      if (!inView || hover || down || wheeling || document.hidden || reduce) return;
+      if (performance.now() - lastTouch < 8000) return;
+      to(Math.round(tpos) + 1);
+    }, 4200);
 
-    new IntersectionObserver(es => { inView = es[0].isIntersecting; sync(); }, { threshold: 0.2 }).observe(deck);
-    addEventListener('resize', layout);
-    go(0);
+    new IntersectionObserver(es => {
+      inView = es[0].isIntersecting;
+      settled = -1;
+      if (inView) kick(); else cards.forEach(c => { const vp = $('.vp', c); if (vp) stop(vp); });
+    }, { threshold: 0.2 }).observe(deck);
+    addEventListener('resize', () => { measure(); layout(); });
+    measure(); layout(); kick();
   });
 
   /* ---------- přehrávač ---------- */

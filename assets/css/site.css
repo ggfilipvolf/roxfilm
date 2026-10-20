@@ -159,14 +159,12 @@ p{margin:0}
 .deck{position:relative;outline:none;user-select:none;-webkit-user-select:none}
 .deck__stage{position:relative;height:clamp(460px,46vw,700px);perspective:1800px;overflow:hidden;touch-action:pan-y;cursor:grab}
 .deck.is-drag .deck__stage{cursor:grabbing}
-.deck__card{--w:clamp(220px,20vw,320px);position:absolute;left:50%;top:50%;width:var(--w);aspect-ratio:9/16;margin:0;transform:translate(-50%,-50%);transition:transform .9s var(--ease),opacity .6s;background:var(--coal);overflow:hidden;will-change:transform}
-.deck.is-drag .deck__card{transition:none}
-.deck.is-wheel .deck__card{transition:transform .35s var(--ease),opacity .4s}
+.deck__card{--w:clamp(220px,20vw,320px);position:absolute;left:50%;top:50%;width:var(--w);aspect-ratio:9/16;margin:0;transform:translate(-50%,-50%);background:var(--coal);overflow:hidden;will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .deck__card .vp{position:absolute;inset:0}
 .deck__card img,.deck__card video{width:100%;height:100%;object-fit:cover;pointer-events:none}
 .deck__card video{opacity:0;transition:opacity .5s}
 .deck__card .vp.is-playing video{opacity:1}
-.deck__card::after{content:"";position:absolute;inset:0;background:#000;opacity:var(--dim,0);transition:opacity .6s;pointer-events:none}
+.deck__card::after{content:"";position:absolute;inset:0;background:#000;opacity:var(--dim,0);pointer-events:none}
 .deck__card.is-active::before{content:"";position:absolute;z-index:2;right:12px;top:12px;width:7px;height:7px;border-radius:50%;background:var(--tally);box-shadow:0 0 10px rgba(227,54,30,.9)}
 .deck__ui{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:24px;padding:0 var(--gutter)}
 .deck__ui button{width:44px;height:44px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:none;transition:border-color .2s}
