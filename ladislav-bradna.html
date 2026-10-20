@@ -17,45 +17,45 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&family=Montserrat:wght@800&display=swap&subset=latin-ext" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v=1">
+<link rel="stylesheet" href="assets/css/site.css?v=3">
 </head>
 <body>
 <a class="sr" href="#obsah">Přeskočit na obsah</a>
 <header class="nav" id="nav">
-  <a class="nav__logo" href="index.html" aria-label="Roxfilm – úvod"><img src="assets/logo/logo-white.png" alt="Roxfilm" width="58" height="38"></a>
+  <a class="nav__logo" href="index.html" aria-label="Roxfilm – úvod"><img src="assets/logo/logo-white.png" alt="Roxfilm" width="46" height="30"></a>
   <button class="nav__toggle" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span></button>
   <ul class="nav__links" id="menu">
-    <li><a href="index.html#vysledky">Výsledky</a></li>
+    <li><a href="index.html#reels">Reels</a></li>
+    <li><a href="index.html#case-studies">Case studies</a></li>
     <li><a href="index.html#prace">Práce</a></li>
-    <li><a href="index.html#za-kamerou">Za kamerou</a></li>
     <li><a href="index.html#o-nas">O nás</a></li>
-    <li><a class="btn btn--ghost" href="index.html#kontakt">Napište nám <svg viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
+    <li><a class="btn" href="index.html#kontakt">Napište nám <svg class="arr" viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
   </ul>
 </header>
 <main id="obsah">
 <section class="cs-hero">
-  <div class="cs-hero__frame"><div class="vp" data-prev="media/lada/vlog.prev.mp4" data-mode="view"><img src="media/lada/vlog.jpg" alt="" loading="lazy" decoding="async"></div></div>
-  <div class="cs-hero__bar mono"><span><i class="rec-dot"></i>Case study</span><span>Osobní značka · financování</span></div>
+  <div class="px cs-hero__frame cs-hero__frame--reels" data-speed="0.06"><div class="px__in"><div class="vp" data-prev="media/lada/bonita.prev.mp4" data-mode="view"><img src="media/lada/bonita.jpg" alt="" loading="lazy" decoding="async"></div><div class="vp" data-prev="media/lada/auto.prev.mp4" data-mode="view"><img src="media/lada/auto.jpg" alt="" loading="lazy" decoding="async"></div><div class="vp" data-prev="media/lada/deset-milionu.prev.mp4" data-mode="view"><img src="media/lada/deset-milionu.jpg" alt="" loading="lazy" decoding="async"></div><div class="vp" data-prev="media/lada/rozchod.prev.mp4" data-mode="view"><img src="media/lada/rozchod.jpg" alt="" loading="lazy" decoding="async"></div><div class="vp" data-prev="media/lada/teaser-zavody.prev.mp4" data-mode="view"><img src="media/lada/teaser-zavody.jpg" alt="" loading="lazy" decoding="async"></div></div></div>
 </section>
 <section class="cs-title">
   <div class="wrap">
-    <h1 class="h-xl caps">Ladislav Bradna</h1>
-    <p class="lead">Osobní značku experta na hypotéky a financování nemovitostí stavíme od června 2026. Nejdřív web, brand manuál a struktura obsahu. Od července natáčíme každý měsíc.</p>
-    <dl class="facts">
-      <div><dt class="mono">Klient</dt><dd>Ladislav Bradna</dd></div>
-      <div><dt class="mono">Obor</dt><dd>Hypotéky a financování</dd></div>
-      <div><dt class="mono">Od</dt><dd>Června 2026</dd></div>
-      <div><dt class="mono">Měsíčně</dt><dd>8 reels, 1 vlog, 2–3 karusely</dd></div>
+    <span class="label" data-reveal><i class="rec-dot"></i>Case study · Osobní značka · financování</span>
+    <h1 class="t-display" style="margin-top:16px" data-reveal>Ladislav Bradna</h1>
+    <p data-reveal style="--d:.08s">Osobní značku experta na hypotéky a financování nemovitostí stavíme od června 2026. Nejdřív web, brand manuál a struktura obsahu. Od července natáčíme každý měsíc.</p>
+    <dl class="facts" data-reveal style="--d:.14s">
+      <div><dt class="label">Klient</dt><dd>Ladislav Bradna</dd></div>
+      <div><dt class="label">Obor</dt><dd>Hypotéky a financování</dd></div>
+      <div><dt class="label">Od</dt><dd>Června 2026</dd></div>
+      <div><dt class="label">Měsíčně</dt><dd>8 reels, 1 vlog, 2–3 karusely</dd></div>
     </dl>
   </div>
 </section>
-<section class="sec sec--light on-light" style="margin-top:clamp(72px,9vw,140px)">
+<section class="sec sec--light" style="margin-top:clamp(64px,8vw,120px)">
   <div class="wrap">
     <div class="cut">
-      <div><span class="mono" style="color:var(--graphite)">Před</span><h2 class="h-m caps" style="margin-top:14px">Výzva</h2><p class="body" style="color:var(--ink)">Finanční expert s praxí a výsledky, kterého znali hlavně klienti z doporučení. Cíl: aby ho lidé znali dřív, než mu zavolají.</p></div>
-      <div><span class="mono" style="color:var(--graphite)">Po</span><h2 class="h-m caps" style="margin-top:14px">Co jsme udělali</h2><ul><li>Web, brand manuál a struktura obsahu</li><li>Témata vymýšlíme spolu s ním, natáčení s klidem na placu</li><li>Každý měsíc reels, vlog „Den s Laďou“ a teasery</li><li>Sprint 32 dní v kuse: každý den jeden výstup</li></ul></div>
+      <div data-reveal><span class="label">Před</span><h2 class="t-h2">Výzva</h2><p>Finanční expert s praxí a výsledky, kterého znali hlavně klienti z doporučení. Cíl: aby ho lidé znali dřív, než mu zavolají.</p></div>
+      <div data-reveal style="--d:.1s"><span class="label">Po</span><h2 class="t-h2">Co jsme udělali</h2><ul><li>Web, brand manuál a struktura obsahu</li><li>Témata vymýšlíme spolu s ním, natáčení s klidem na placu</li><li>Každý měsíc reels, vlog „Den s Laďou“ a teasery</li><li>Sprint 32 dní v kuse: každý den jeden výstup</li></ul></div>
     </div>
-    <div class="bignums">
+    <div class="nums" data-reveal>
       <div><b>4–5</b><span>poptávek ze sítí za první čtyři měsíce</span></div>
       <div><b>8 + 1</b><span>reels a vlog každý měsíc</span></div>
       <div><b>32</b><span>dní v kuse s denním výstupem</span></div>
@@ -64,61 +64,61 @@
 </section>
 <section class="sec" style="padding-bottom:0">
   <div class="wrap">
-    <div class="sec__head"><h2 class="h-m caps">Reels</h2><p class="body">Jedno téma, jedna myšlenka, titulky. Otázky, které klienti opravdu řeší.</p></div>
+    <div class="head" data-reveal><div><span class="label">Reels</span><h2 class="t-h2">Otázky, které klienti opravdu řeší</h2></div><p>Jedno téma, jedna myšlenka, titulky.</p></div>
     <div class="rgrid">
-      <button type="button" class="reel" data-full="media/lada/bonita.mp4" data-poster="media/lada/bonita.jpg" data-title="Bonita a skladba příjmů" data-vertical="1"><div class="reel__frame"><div class="vp" data-prev="media/lada/bonita.prev.mp4" data-mode="hover"><img src="media/lada/bonita.jpg" alt="" loading="lazy" decoding="async"></div></div><p class="muted" style="margin:10px 0 0;font-size:14px">Bonita a skladba příjmů</p></button>
-      <button type="button" class="reel" data-full="media/lada/auto.mp4" data-poster="media/lada/auto.jpg" data-title="Nekupuj auto, kup byt" data-vertical="1"><div class="reel__frame"><div class="vp" data-prev="media/lada/auto.prev.mp4" data-mode="hover"><img src="media/lada/auto.jpg" alt="" loading="lazy" decoding="async"></div></div><p class="muted" style="margin:10px 0 0;font-size:14px">Nekupuj auto, kup byt</p></button>
-      <button type="button" class="reel" data-full="media/lada/deset-milionu.mp4" data-poster="media/lada/deset-milionu.jpg" data-title="10 milionů a čerpání" data-vertical="1"><div class="reel__frame"><div class="vp" data-prev="media/lada/deset-milionu.prev.mp4" data-mode="hover"><img src="media/lada/deset-milionu.jpg" alt="" loading="lazy" decoding="async"></div></div><p class="muted" style="margin:10px 0 0;font-size:14px">10 milionů a čerpání</p></button>
-      <button type="button" class="reel" data-full="media/lada/rozchod.mp4" data-poster="media/lada/rozchod.jpg" data-title="Rozchod a hypotéka" data-vertical="1"><div class="reel__frame"><div class="vp" data-prev="media/lada/rozchod.prev.mp4" data-mode="hover"><img src="media/lada/rozchod.jpg" alt="" loading="lazy" decoding="async"></div></div><p class="muted" style="margin:10px 0 0;font-size:14px">Rozchod a hypotéka</p></button>
-      <button type="button" class="reel" data-full="media/lada/teaser-zavody.mp4" data-poster="media/lada/teaser-zavody.jpg" data-title="Teaser: den na závodech" data-vertical="1"><div class="reel__frame"><div class="vp" data-prev="media/lada/teaser-zavody.prev.mp4" data-mode="hover"><img src="media/lada/teaser-zavody.jpg" alt="" loading="lazy" decoding="async"></div></div><p class="muted" style="margin:10px 0 0;font-size:14px">Teaser: den na závodech</p></button>
+      <button type="button" class="reel" data-full="media/lada/bonita.mp4" data-poster="media/lada/bonita.jpg" data-title="Bonita a skladba příjmů" data-vertical="1" data-reveal style="--d:0.00s"><div class="reel__frame"><div class="vp" data-prev="media/lada/bonita.prev.mp4" data-mode="view"><img src="media/lada/bonita.jpg" alt="" loading="lazy" decoding="async"></div></div><p>Bonita a skladba příjmů</p></button>
+      <button type="button" class="reel" data-full="media/lada/auto.mp4" data-poster="media/lada/auto.jpg" data-title="Nekupuj auto, kup byt" data-vertical="1" data-reveal style="--d:0.06s"><div class="reel__frame"><div class="vp" data-prev="media/lada/auto.prev.mp4" data-mode="view"><img src="media/lada/auto.jpg" alt="" loading="lazy" decoding="async"></div></div><p>Nekupuj auto, kup byt</p></button>
+      <button type="button" class="reel" data-full="media/lada/deset-milionu.mp4" data-poster="media/lada/deset-milionu.jpg" data-title="10 milionů a čerpání" data-vertical="1" data-reveal style="--d:0.12s"><div class="reel__frame"><div class="vp" data-prev="media/lada/deset-milionu.prev.mp4" data-mode="view"><img src="media/lada/deset-milionu.jpg" alt="" loading="lazy" decoding="async"></div></div><p>10 milionů a čerpání</p></button>
+      <button type="button" class="reel" data-full="media/lada/rozchod.mp4" data-poster="media/lada/rozchod.jpg" data-title="Rozchod a hypotéka" data-vertical="1" data-reveal style="--d:0.18s"><div class="reel__frame"><div class="vp" data-prev="media/lada/rozchod.prev.mp4" data-mode="view"><img src="media/lada/rozchod.jpg" alt="" loading="lazy" decoding="async"></div></div><p>Rozchod a hypotéka</p></button>
+      <button type="button" class="reel" data-full="media/lada/teaser-zavody.mp4" data-poster="media/lada/teaser-zavody.jpg" data-title="Teaser: den na závodech" data-vertical="1" data-reveal style="--d:0.24s"><div class="reel__frame"><div class="vp" data-prev="media/lada/teaser-zavody.prev.mp4" data-mode="view"><img src="media/lada/teaser-zavody.jpg" alt="" loading="lazy" decoding="async"></div></div><p>Teaser: den na závodech</p></button>
     </div>
   </div>
 </section>
 <section class="sec" style="padding-bottom:0">
   <div class="wrap">
-    <div class="sec__head"><h2 class="h-m caps">Vlog „Den s Laďou“</h2><p class="body">Delší formát na YouTube. Ke každému vlogu teasery před vydáním i po něm.</p></div>
+    <div class="head" data-reveal><div><span class="label">YouTube</span><h2 class="t-h2">Vlog „Den s Laďou“</h2></div><p>Delší formát na YouTube. Ke každému vlogu teasery před vydáním i po něm.</p></div>
     <div class="rgrid">
-      <button type="button" class="reel" data-full="media/lada/teaser-kojetin.mp4" data-poster="media/lada/teaser-kojetin.jpg" data-title="Trailer: Kojetín" data-vertical="1"><div class="reel__frame"><div class="vp" data-prev="media/lada/teaser-kojetin.prev.mp4" data-mode="hover"><img src="media/lada/teaser-kojetin.jpg" alt="" loading="lazy" decoding="async"></div></div><p class="muted" style="margin:10px 0 0;font-size:14px">Trailer: Kojetín</p></button>
-      <button type="button" class="reel" data-full="media/lada/teaser-flip.mp4" data-poster="media/lada/teaser-flip.jpg" data-title="Flip nemovitosti za 6 hodin" data-vertical="1"><div class="reel__frame"><div class="vp" data-prev="media/lada/teaser-flip.prev.mp4" data-mode="hover"><img src="media/lada/teaser-flip.jpg" alt="" loading="lazy" decoding="async"></div></div><p class="muted" style="margin:10px 0 0;font-size:14px">Flip nemovitosti za 6 hodin</p></button>
-      <button type="button" class="reel" data-full="media/lada/teaser-zavody.mp4" data-poster="media/lada/teaser-zavody.jpg" data-title="Rybářské závody" data-vertical="1"><div class="reel__frame"><div class="vp" data-prev="media/lada/teaser-zavody.prev.mp4" data-mode="hover"><img src="media/lada/teaser-zavody.jpg" alt="" loading="lazy" decoding="async"></div></div><p class="muted" style="margin:10px 0 0;font-size:14px">Rybářské závody</p></button>
+      <button type="button" class="reel" data-full="media/lada/teaser-kojetin.mp4" data-poster="media/lada/teaser-kojetin.jpg" data-title="Trailer: Kojetín" data-vertical="1" data-reveal style="--d:0.00s"><div class="reel__frame"><div class="vp" data-prev="media/lada/teaser-kojetin.prev.mp4" data-mode="view"><img src="media/lada/teaser-kojetin.jpg" alt="" loading="lazy" decoding="async"></div></div><p>Trailer: Kojetín</p></button>
+      <button type="button" class="reel" data-full="media/lada/teaser-flip.mp4" data-poster="media/lada/teaser-flip.jpg" data-title="Flip nemovitosti za 6 hodin" data-vertical="1" data-reveal style="--d:0.06s"><div class="reel__frame"><div class="vp" data-prev="media/lada/teaser-flip.prev.mp4" data-mode="view"><img src="media/lada/teaser-flip.jpg" alt="" loading="lazy" decoding="async"></div></div><p>Flip nemovitosti za 6 hodin</p></button>
+      <button type="button" class="reel" data-full="media/lada/teaser-zavody.mp4" data-poster="media/lada/teaser-zavody.jpg" data-title="Rybářské závody" data-vertical="1" data-reveal style="--d:0.12s"><div class="reel__frame"><div class="vp" data-prev="media/lada/teaser-zavody.prev.mp4" data-mode="view"><img src="media/lada/teaser-zavody.jpg" alt="" loading="lazy" decoding="async"></div></div><p>Rybářské závody</p></button>
     </div>
   </div>
 </section>
 <section class="sec" style="padding-bottom:0">
   <div class="wrap">
-    <div class="sec__head"><h2 class="h-m caps">Foto pro web a sítě</h2><span></span></div>
+    <div class="head" data-reveal><div><span class="label">Foto</span><h2 class="t-h2">Foto pro web a sítě</h2></div><span></span></div>
     <div class="pgrid">
-      <figure><img src="assets/img/lada-portrait.jpg" alt="Ladislav Bradna, portrét" loading="lazy" decoding="async"></figure>
-      <figure><img src="assets/img/lada-process.jpg" alt="Ladislav Bradna na ulici" loading="lazy" decoding="async"></figure>
-      <figure><img src="assets/img/lada-about.jpg" alt="Ladislav Bradna v zahradě" loading="lazy" decoding="async"></figure>
-      <figure><img src="assets/img/lada-steps.jpg" alt="Ladislav Bradna s tabletem" loading="lazy" decoding="async"></figure>
+      <figure data-reveal style="--d:0.00s"><div class="px "><div class="px__in"><img src="assets/img/lada-portrait.jpg" alt="Ladislav Bradna, portrét" loading="lazy" decoding="async"></div></div></figure>
+      <figure data-reveal style="--d:0.07s"><div class="px "><div class="px__in"><img src="assets/img/lada-process.jpg" alt="Ladislav Bradna na ulici" loading="lazy" decoding="async"></div></div></figure>
+      <figure data-reveal style="--d:0.14s"><div class="px "><div class="px__in"><img src="assets/img/lada-about.jpg" alt="Ladislav Bradna v zahradě" loading="lazy" decoding="async"></div></div></figure>
+      <figure data-reveal style="--d:0.00s"><div class="px "><div class="px__in"><img src="assets/img/lada-steps.jpg" alt="Ladislav Bradna s tabletem" loading="lazy" decoding="async"></div></div></figure>
     </div>
   </div>
 </section>
 <section class="sec" style="padding-bottom:0">
   <div class="wrap">
-    <a class="next" href="krasochatky.html"><span><span class="mono muted">Další case study</span><span class="h-l caps" style="display:block;margin-top:14px">Krasochatky</span></span><svg viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a>
+    <a class="next" href="balonio.html" data-reveal><span><span class="label">Další case study</span><span class="t-h2">Balonio</span></span><svg class="arr" viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a>
   </div>
 </section>
 <section class="sec" id="kontakt">
   <div class="wrap contact">
-    <div>
-      <span class="mono muted"><i class="rec-dot"></i>Kontakt</span>
-      <h2 class="h-xl caps" style="margin-top:22px">Napište nám.</h2>
-      <p class="lead contact__note">Zavolejte nebo napište. Domluvíme si krátkou schůzku a navrhneme, jak na to.</p>
+    <div data-reveal>
+      <span class="label"><i class="rec-dot"></i>Kontakt</span>
+      <h2 class="t-h2" style="margin-top:16px">Napište nám.</h2>
+      <p>Zavolejte nebo napište. Domluvíme si krátkou schůzku a navrhneme, jak na to.</p>
     </div>
-    <ul class="contact__list">
-      <li><a href="tel:+420777272802"><span>Telefon</span><b>777 272 802</b><svg viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
-      <li><a href="mailto:ggfilipvolf@gmail.com"><span>E-mail</span><b>ggfilipvolf@gmail.com</b><svg viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
-      <li><a href="https://www.instagram.com/roxfilm.cz/" target="_blank" rel="noopener"><span>Instagram</span><b>@roxfilm.cz</b><svg viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
-      <li><a href="https://www.instagram.com/filipvolf_official/" target="_blank" rel="noopener"><span>Zakladatel</span><b>@filipvolf_official</b><svg viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
+    <ul class="clist" data-reveal style="--d:.1s">
+      <li><a href="tel:+420777272802"><span>Telefon</span><b>777 272 802</b><svg class="arr" viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
+      <li><a href="mailto:ggfilipvolf@gmail.com"><span>E-mail</span><b>ggfilipvolf@gmail.com</b><svg class="arr" viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
+      <li><a href="https://www.instagram.com/roxfilm.cz/" target="_blank" rel="noopener"><span>Instagram</span><b>@roxfilm.cz</b><svg class="arr" viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
+      <li><a href="https://www.instagram.com/filipvolf_official/" target="_blank" rel="noopener"><span>Zakladatel</span><b>@filipvolf_official</b><svg class="arr" viewBox="0 0 144 248" aria-hidden="true"><polygon fill="currentColor" points="0,0 123,0 144,124 123,248 0,248 100,124"/></svg></a></li>
     </ul>
   </div>
 </section>
 </main>
 <footer class="foot">
   <div class="wrap">
-    <img src="assets/logo/logo-white.png" alt="Roxfilm" width="46" height="30" loading="lazy">
+    <img src="assets/logo/logo-white.png" alt="Roxfilm" width="37" height="24" loading="lazy">
     <span>Produkce Roxfilm · Brno · točíme kdekoli · © <span data-year>2026</span></span>
     <nav aria-label="Patička">
       <a href="pujcovna.html">Půjčovna techniky</a>
@@ -129,10 +129,11 @@
 </footer>
 <div class="player" role="dialog" aria-modal="true" aria-label="Přehrávač videa">
   <div class="player__box">
-    <div class="player__top"><b></b><button class="player__close" aria-label="Zavřít video"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 1l14 14M15 1L1 15" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
+    <div class="player__top"><b></b><button class="player__close" aria-label="Zavřít video"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1 1l14 14M15 1L1 15" stroke="currentColor" stroke-width="1.4"/></svg></button></div>
     <video controls playsinline preload="none"></video>
   </div>
 </div>
-<script src="assets/js/site.js?v=1" defer></script>
+<script src="assets/js/lenis.min.js" defer></script>
+<script src="assets/js/site.js?v=3" defer></script>
 </body>
 </html>
