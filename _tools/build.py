@@ -8,7 +8,7 @@ import json, os, html
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META = json.load(open(os.path.join(ROOT, '_tools', 'media.json')))  # slug -> {w,h,dur,full}
 E = html.escape
-V = '11'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
+V = '12'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
 
 PHONE = '777 272 802'; PHONE_TEL = '+420777272802'
 EMAIL = 'ggfilipvolf@gmail.com'
@@ -91,7 +91,7 @@ def nav(home=False):
   <a class="nav__logo" href="{p or '#top'}" aria-label="Roxfilm – úvod"><img src="assets/logo/logo-white.png" alt="Roxfilm" width="46" height="30"></a>
   <button class="nav__toggle" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span></button>
   <ul class="nav__links" id="menu">
-    <li><a href="{p}#reels">Reels</a></li>
+    <li><a href="{p}#reels-x">Reels</a></li>
     <li><a href="{p}#case-studies">Case studies</a></li>
     <li><a href="{p}#prace">Práce</a></li>
     <li><a href="{p}#o-nas">O nás</a></li>
@@ -332,9 +332,15 @@ def index():
   </div>
 </section>
 ''')
-    # REELS – první práce
-    o.append(f'''<section class="sec" id="reels">
-  <div class="wrap">{sec_head('Reels', 'Krátká videa, která lidi zastaví.', 'Pro osobní značky, firmy i eventy. Natočená pro mobil a střižená na první tři vteřiny.')}</div>
+    # REELS – nejdřív 3D X z loga, kamera shora se zastaví před ním, pak karusel
+    o.append(f'''<section class="xs" id="reels-x" aria-label="Reels">
+  <div class="xs__pin">
+    <canvas aria-hidden="true"></canvas>
+    <div class="xs__title"><span class="label"><i class="rec-dot"></i>Reels</span><h2 class="t-statement">Krátká videa,<br>která lidi zastaví.</h2></div>
+  </div>
+</section>
+<section class="sec sec--reels" id="reels">
+  <div class="wrap"><p class="reels__lead" data-reveal>Pro osobní značky, firmy i eventy. Natočená pro mobil a střižená na první tři vteřiny.</p></div>
   {deck(REELS, 'Reels od Roxfilmu')}
 </section>
 ''')
@@ -391,6 +397,8 @@ def index():
 ''')
     o.append(contact_block())
     o.append('</main>\n')
+    o.append('<script type="importmap">{"imports":{"three":"./assets/js/three/three.module.min.js"}}</script>\n'
+             f'<script type="module" src="assets/js/x3d.js?v={V}"></script>\n')
     o.append(foot())
     return ''.join(o)
 
