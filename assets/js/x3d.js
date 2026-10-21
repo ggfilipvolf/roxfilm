@@ -1,118 +1,124 @@
-/* Roxfilm – 3D X z loga před sekcí reels (three.js, scroll řídí kameru) */
+/* Roxfilm – 3D X z loga před sekcí reels (three.js, scroll řídí kameru)
+   Kamera začíná těsně u hrany černého X, přetočí se, oddálí a zastaví přímo před ním. */
 import * as THREE from 'three';
-import { RoomEnvironment } from './three/RoomEnvironment.js';
 import { Reflector } from './three/Reflector.js';
 
 const q = new URLSearchParams(location.search);
-const MODE = 'white';
 const FIXED = q.has('p') ? parseFloat(q.get('p')) : null;
 
 const sec = document.getElementById('reels-x');
 if (!sec) throw 0;
+const pin = sec.querySelector('.xs__pin');
 const canvas = sec.querySelector('canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+const DPR = Math.min(devicePixelRatio || 1, 2);
+renderer.setPixelRatio(DPR);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
+renderer.toneMappingExposure = 1.05;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
 const INK = new THREE.Color('#0F0F0E');
 scene.background = INK;
-scene.fog = new THREE.Fog(INK, 1500, 3200);
-const pmrem = new THREE.PMREMGenerator(renderer);
-scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-scene.environmentIntensity = MODE === 'chrome' ? 0.9 : 0.35;
+scene.fog = new THREE.Fog(INK, 1400, 3000);
+
+// --- studiové prostředí: tmavý ateliér s dlouhými softboxy, které se odráží v lesklé černé ---
+function studio() {
+  const env = new THREE.Scene();
+  env.add(new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), new THREE.MeshBasicMaterial({ color: '#050505', side: THREE.BackSide })));
+  const box = (w, h, x, y, z, ry, rx, k) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(k, k, k), side: THREE.DoubleSide }));
+    m.position.set(x, y, z); m.rotation.set(rx, ry, 0); env.add(m);
+  };
+  box(36, 3.2, 0, 30, 6, 0, Math.PI / 2, 6);        // dlouhý softbox nad hlavou
+  box(3, 30, -40, 6, 14, Math.PI / 2, 0, 3.2);      // úzký pruh vlevo
+  box(3, 30, 40, 6, 10, -Math.PI / 2, 0, 2.2);      // úzký pruh vpravo
+  box(26, 8, 0, 8, -46, 0, 0, 1.6);                 // kontra zezadu
+  box(18, 2, 0, -8, 40, Math.PI, 0, 0.6);           // slabý odraz zespodu
+  box(44, 14, 0, 26, 44, Math.PI, -0.5, 0.55);      // velká měkká plocha před X: jemný přechod na čelní stěně
+  const pm = new THREE.PMREMGenerator(renderer);
+  const t = pm.fromScene(env, 0.02).texture; pm.dispose(); return t;
+}
+scene.environment = studio();
 
 // --- X z loga: dvě poloviny přesně podle polygonů z brand manuálu ---
 const L = [[0,0],[123,0],[144,124],[123,248],[0,248],[100,124]];
 const R = [[22,0],[139,0],[42,124],[139,248],[22,248],[0,124]];
 const OX = 158;                       // mezera mezi polovinami jako v logu
 const shape = (pts, ox) => { const s = new THREE.Shape(); pts.forEach(([x, y], i) => { const X = x + ox, Y = 248 - y; i ? s.lineTo(X, Y) : s.moveTo(X, Y); }); s.closePath(); return s; };
-const extr = { depth: 46, bevelEnabled: true, bevelThickness: 2.2, bevelSize: 1.8, bevelSegments: 4, curveSegments: 1 };
-const mats = {
-  white: new THREE.MeshPhysicalMaterial({ color: '#F2F0EB', roughness: 0.42, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.4 }),
-  black: new THREE.MeshPhysicalMaterial({ color: '#141413', roughness: 0.22, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.12 }),
-  chrome: new THREE.MeshPhysicalMaterial({ color: '#d9d7d2', roughness: 0.12, metalness: 1 }),
-};
-const mat = mats[MODE] || mats.white;
+const extr = { depth: 52, bevelEnabled: true, bevelThickness: 3.2, bevelSize: 2.6, bevelSegments: 8, curveSegments: 1 };
+// černá s jemným leskem: matnější základ + čistý lak, ve kterém se odráží softboxy
+const mat = new THREE.MeshPhysicalMaterial({ color: '#0b0b0b', roughness: 0.34, metalness: 0.05, clearcoat: 1, clearcoatRoughness: 0.07, envMapIntensity: 1.25 });
 const xg = new THREE.Group();
 [[L, 0], [R, OX]].forEach(([pts, ox]) => {
   const g = new THREE.ExtrudeGeometry(shape(pts, ox), extr);
   const m = new THREE.Mesh(g, mat); m.castShadow = true; m.receiveShadow = true; xg.add(m);
 });
 const W = OX + 139;
-xg.position.set(-W / 2, 0, -23);       // střed X v počátku, stojí na podlaze
+xg.position.set(-W / 2, 3.2, -26);    // střed X v počátku, stojí na podlaze
 scene.add(xg);
 
-// lesklá tmavá podlaha: zrcadlo + ztmavující vrstva = odraz X jako na mokrém betonu
-const mirror = new Reflector(new THREE.PlaneGeometry(9000, 9000), { textureWidth: 1024 * Math.min(devicePixelRatio || 1, 2), textureHeight: 1024 * Math.min(devicePixelRatio || 1, 2), color: 0x3a3a38 });
+// tmavá podlaha s jemným odrazem
+const RT = 1024 * DPR;
+const mirror = new Reflector(new THREE.PlaneGeometry(9000, 9000), { textureWidth: RT, textureHeight: RT, color: 0x2a2a28 });
 mirror.rotation.x = -Math.PI / 2; mirror.position.y = -0.5; scene.add(mirror);
-const floor = new THREE.Mesh(new THREE.PlaneGeometry(9000, 9000), new THREE.MeshStandardMaterial({ color: '#0F0F0E', roughness: 0.6, metalness: 0, transparent: true, opacity: 0.82 }));
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(9000, 9000), new THREE.MeshStandardMaterial({ color: '#0F0F0E', roughness: 0.7, metalness: 0, transparent: true, opacity: 0.86 }));
 floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
 
-// světla: úzký kužel shora (dramatický stín), kontra zezadu, minimum fill
-const key = new THREE.SpotLight('#ffffff', 3.2e6, 0, Math.PI / 13, 0.55, 2);
-key.position.set(-120, 1600, 260); key.target.position.set(0, 0, 0);
+// světla: kužel shora, dvě kontry zezadu kreslí obrys černého X
+const key = new THREE.SpotLight('#ffffff', 2.6e6, 0, Math.PI / 12, 0.6, 2);
+key.position.set(-160, 1600, 300); key.target.position.set(0, 0, 0);
 key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0004; key.shadow.radius = 5;
 scene.add(key, key.target);
-const rim = new THREE.SpotLight('#e6ecff', 2.4e6, 0, Math.PI / 9, 0.5, 2);
-rim.position.set(640, 420, -1000); rim.target.position.set(0, 130, 0); scene.add(rim, rim.target);
-const rim2 = new THREE.SpotLight('#ffffff', 1.4e6, 0, Math.PI / 9, 0.5, 2);
-rim2.position.set(-700, 300, -800); rim2.target.position.set(0, 130, 0); scene.add(rim2, rim2.target);
-const fill = new THREE.HemisphereLight('#ffffff', '#0F0F0E', 0.12); scene.add(fill);
+const rimL = new THREE.SpotLight('#ffffff', 3.4e6, 0, Math.PI / 10, 0.5, 2);
+rimL.position.set(-760, 360, -820); rimL.target.position.set(0, 124, 0); scene.add(rimL, rimL.target);
+const rimR = new THREE.SpotLight('#eef2ff', 3.0e6, 0, Math.PI / 10, 0.5, 2);
+rimR.position.set(760, 420, -760); rimR.target.position.set(0, 124, 0); scene.add(rimR, rimR.target);
 
-// viditelný paprsek světla shora (jemný, aditivní)
-const beamMat = new THREE.ShaderMaterial({
-  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
-  uniforms: { uO: { value: 0.11 } },
-  vertexShader: 'varying vec2 vUv; varying vec3 vN; varying vec3 vV; void main(){ vUv=uv; vN=normalize(normalMatrix*normal); vec4 mv=modelViewMatrix*vec4(position,1.); vV=normalize(-mv.xyz); gl_Position=projectionMatrix*mv; }',
-  fragmentShader: 'uniform float uO; varying vec2 vUv; varying vec3 vN; varying vec3 vV; void main(){ float edge=pow(abs(dot(vN,vV)),2.2); float h=smoothstep(0.,1.,vUv.y); gl_FragColor=vec4(vec3(1.),uO*edge*h); }'
-});
-const beam = new THREE.Mesh(new THREE.CylinderGeometry(18, 330, 1500, 48, 1, true), beamMat);
-beam.position.set(-130, 750, 190); beam.lookAt(key.position.x, 1500 + 750, key.position.z);
-beam.position.copy(key.position).add(new THREE.Vector3(0, 0, 0)).lerp(new THREE.Vector3(0, 0, 0), 0.5);
-beam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), key.position.clone().sub(new THREE.Vector3(0, 0, 0)).normalize());
-scene.add(beam);
-
-// kamera: shora → kran dolů → zastaví přesně před X
-const cam = new THREE.PerspectiveCamera(32, 1, 1, 10000);
-const look = new THREE.Vector3();
+// kamera: těsně u hrany → přetočení → oddálení → zastaví přímo před X
+const cam = new THREE.PerspectiveCamera(32, 1, 0.5, 10000);
+const look = new THREE.Vector3(), T0 = new THREE.Vector3(-26, 150, 26), T1 = new THREE.Vector3(0, 100, 0);
+const smooth = t => t * t * (3 - 2 * t);
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const D = THREE.MathUtils.degToRad;
+let D1 = 840;
 function camAt(t) {
-  // t 0 = pohled seshora, t 1 = přímo před X ve výšce středu
   const e = ease(t);
-  const pitch = THREE.MathUtils.lerp(THREE.MathUtils.degToRad(86), THREE.MathUtils.degToRad(4), e);
-  const yaw = THREE.MathUtils.lerp(THREE.MathUtils.degToRad(-38), 0, ease(clamp(t * 1.15)));
-  const dist = THREE.MathUtils.lerp(1150, 960, e);
-  const cy = 124;
-  cam.position.set(Math.sin(yaw) * Math.cos(pitch) * dist, cy + Math.sin(pitch) * dist, Math.cos(yaw) * Math.cos(pitch) * dist);
-  look.set(0, THREE.MathUtils.lerp(60, 30, e), 0);
+  const yaw = THREE.MathUtils.lerp(D(68), 0, smooth(clamp(t * 1.12)));
+  const pitch = THREE.MathUtils.lerp(D(16), D(4), e);
+  const dist = 120 * Math.pow(D1 / 120, ease(clamp(t * 1.04)));   // oddálení jako jízda jeřábem
+  look.lerpVectors(T0, T1, e);
+  cam.position.set(look.x + Math.sin(yaw) * Math.cos(pitch) * dist, look.y + Math.sin(pitch) * dist, look.z + Math.cos(yaw) * Math.cos(pitch) * dist);
   cam.lookAt(look);
-  cam.rotation.z += THREE.MathUtils.degToRad(THREE.MathUtils.lerp(-6, 0, e));
+  cam.rotation.z += D(THREE.MathUtils.lerp(-9, 0, e));
 }
 
 function size() {
-  const w = sec.querySelector('.xs__pin').clientWidth, h = sec.querySelector('.xs__pin').clientHeight;
+  const w = pin.clientWidth, h = pin.clientHeight;
   renderer.setSize(w, h, false); cam.aspect = w / h;
-  cam.fov = w / h < 0.8 ? 52 : 32; cam.updateProjectionMatrix();
+  const portrait = w / h < 0.8;
+  cam.fov = portrait ? 52 : 32; D1 = portrait ? 1000 : 840;
+  cam.updateProjectionMatrix();
 }
 addEventListener('resize', size); size();
 
-let cur = FIXED ?? 0, vis = true;
-new IntersectionObserver(es => { vis = es[0].isIntersecting; }, { rootMargin: '300px' }).observe(sec);
-function frame() {
-  if (!vis) { requestAnimationFrame(frame); return; }
-  const r = sec.getBoundingClientRect();
-  const p = FIXED ?? clamp(-r.top / (r.height - innerHeight));
-  const target = clamp(p / 0.8);               // poslední pětina = kamera stojí a ukáže se titulek
-  cur += (target - cur) * (FIXED != null ? 1 : 0.12);
-  camAt(cur);
-  sec.classList.toggle('is-on', p > 0.78);
-  renderer.render(scene, cam);
+let cur = FIXED ?? 0, vis = true, lastT = 0;
+new IntersectionObserver(es => { vis = es[0].isIntersecting; }, { rootMargin: '400px' }).observe(sec);
+function frame(now) {
   requestAnimationFrame(frame);
+  const dt = Math.min(100, lastT ? now - lastT : 16); lastT = now;
+  if (!vis) return;
+  const r = sec.getBoundingClientRect(), vh = innerHeight;
+  // sekce je podsunutá pod předchozí (o 100vh); pohyb začíná, jakmile spodek světlé sekce
+  // začne mizet, tedy ještě nad karty Osobní značky / Firmy / Instituce
+  const p = FIXED ?? clamp((vh * 0.75 - r.top) / (r.height - vh * 0.25));
+  const target = clamp(p / 0.84);
+  cur += (target - cur) * (FIXED != null ? 1 : 1 - Math.pow(0.0015, dt / 1000));
+  camAt(cur);
+  sec.classList.toggle('is-on', p > 0.87);
+  renderer.render(scene, cam);
 }
 requestAnimationFrame(frame);

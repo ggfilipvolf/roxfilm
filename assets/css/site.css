@@ -360,7 +360,9 @@ p{margin:0}
 .sec--clients .marquee{margin-top:22px}
 .who-wrap{margin-top:clamp(72px,9vw,140px)}
 /* 3D X před reels */
-.xs{position:relative;height:340vh;background:var(--ink)}
+.xs{position:relative;z-index:1;height:400vh;margin-top:-100vh;background:var(--ink)}
+/* světlá sekce nad X: spodek se rozpustí do tmy a X pod ní už je vidět */
+#pro-koho{position:relative;z-index:2;background:linear-gradient(to bottom,var(--paper) 0,var(--paper) calc(100% - 46vh),rgba(242,240,235,.82) calc(100% - 30vh),rgba(242,240,235,.35) calc(100% - 14vh),rgba(242,240,235,0) 100%);padding-bottom:46vh}
 .xs__pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
 .xs canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .xs__title{position:absolute;left:0;right:0;bottom:7vh;text-align:center;padding:0 var(--gutter);opacity:0;transform:translate3d(0,24px,0);transition:opacity 1s var(--ease),transform 1.2s var(--ease)}

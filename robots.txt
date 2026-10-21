@@ -3,4 +3,3 @@ Allow: /
 Disallow: /pujcovna.html
 
 Sitemap: https://www.roxfilm.cz/sitemap.xml
-Disallow: /x-preview.html

@@ -351,14 +351,30 @@
     let v = $('video', vp);
     if (!v) {
       v = document.createElement('video');
-      v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.setAttribute('muted', '');
-      v.preload = 'auto'; v.src = vp.dataset.prev;
+      // Safari: atributy muted/playsinline/autoplay musí být na místě dřív než src
+      v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true;
+      v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
+      v.preload = 'auto';
       vp.appendChild(v);
+      v.src = vp.dataset.prev;
+      v.addEventListener('playing', () => { vp._playT = performance.now(); vp.classList.add('is-playing'); });
     }
     return v;
   }
-  function play(vp) { const v = ensure(vp); vp.classList.add('is-playing'); const pr = v.play(); if (pr) pr.catch(() => vp.classList.remove('is-playing')); }
-  function stop(vp) { const v = $('video', vp); if (v) v.pause(); vp.classList.remove('is-playing'); }
+  // spustí video a když ho prohlížeč napoprvé odmítne, zkusí to znovu, jakmile má data
+  function kickPlay(v, ok) {
+    let tries = 0;
+    const go = () => {
+      if (!ok() || !v.paused) return;
+      if (v.networkState === 0) v.load();
+      const pr = v.play(); if (pr) pr.catch(() => {});
+    };
+    go();
+    ['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'].forEach(ev => v.addEventListener(ev, go, { once: true }));
+    const t = setInterval(() => { if (!ok() || !v.paused || ++tries > 12) return clearInterval(t); go(); }, 350);
+  }
+  function play(vp) { const v = ensure(vp); vp._want = true; if (!v.paused) vp.classList.add('is-playing'); kickPlay(v, () => vp._want); }
+  function stop(vp) { vp._want = false; const v = $('video', vp); if (v) v.pause(); vp.classList.remove('is-playing'); }
   const io = new IntersectionObserver(es => es.forEach(e => {
     const vp = e.target, mode = vp.dataset.mode || 'view';
     if (mode === 'deck') return;
@@ -407,14 +423,13 @@
         const vp = $('.vp', c); if (!vp) return;
         const d = Math.min(Math.abs(k - i), n - Math.abs(k - i));
         if (k === i && inView) {
-          const v = ensure(vp);
-          vp.classList.add('is-playing');
-          const go = () => { if (settled !== k || !inView) return; const pr = v.play(); if (pr) pr.catch(() => {}); };
-          go();
-          if (v.readyState < 3) v.addEventListener('canplay', go, { once: true });
+          const v = ensure(vp); vp._want = true;
+          if (!v.paused) vp.classList.add('is-playing');
+          kickPlay(v, () => vp._want && settled === k && inView);
         } else {
           stop(vp);
-          if (d === 1) { const v = ensure(vp); v.preload = 'auto'; }
+          // sousedé se načtou dopředu, ať se po příjezdu rozjedou hned
+          if (d <= 2) { const v = ensure(vp); if (v.readyState < 2 && v.networkState !== 2) v.load(); }
         }
         c.classList.toggle('is-active', k === i);
         c.tabIndex = k === i ? 0 : -1;
@@ -425,20 +440,21 @@
       count.textContent = String(i + 1).padStart(2, '0');
       label.textContent = cards[i].dataset.label || '';
     }
-    let dragging = false, wheeling = false, idleT = 0;
-    function loop() {
-      const k = dragging ? 0.5 : 0.14;
+    let dragging = false, wheeling = false, idleT = 0, lastT = 0, playingSince = 0;
+    function loop(now) {
+      const dt = Math.min(64, lastT ? now - lastT : 16); lastT = now;
+      // dojezd nezávislý na snímkové frekvenci (60 i 120 Hz se chová stejně)
+      const k = 1 - Math.pow(dragging ? 1e-9 : 2e-4, dt / 1000);
       pos += (tpos - pos) * k;
-      if (Math.abs(tpos - pos) < 0.008) pos = tpos;
+      if (Math.abs(tpos - pos) < 0.01) pos = tpos;
       layout();
       const act = mod(Math.round(pos));
       setLabel(act);
-      const still = pos === tpos && !dragging && !wheeling;
-      if (still) {
-        if (settled !== act) { settled = act; playActive(act); }
-        running = false; return;
-      }
-      if (settled !== -1) { settled = -1; cards.forEach(c => c.classList.remove('is-active')); }
+      // video se pouští už při dojíždění, ne až v úplném klidu
+      const near = Math.abs(tpos - pos) < 0.3 && !dragging && !wheeling && Math.round(tpos) === Math.round(pos);
+      if (near) { if (settled !== act) { settled = act; playingSince = performance.now(); playActive(act); } }
+      else if (settled !== -1) { settled = -1; cards.forEach(c => c.classList.remove('is-active')); }
+      if (pos === tpos && !dragging && !wheeling) { running = false; lastT = 0; return; }
       requestAnimationFrame(loop);
     }
     function kick() { if (!running) { running = true; requestAnimationFrame(loop); } }
@@ -496,8 +512,13 @@
     setInterval(() => {
       if (!inView || hover || down || wheeling || document.hidden || reduce) return;
       if (performance.now() - lastTouch < 8000) return;
+      // posune se dál, až když aktivní video opravdu chvíli hrálo (nebo se nenačte ani po 9 s)
+      const vp = settled >= 0 ? $('.vp', cards[settled]) : null, v = vp && $('video', vp);
+      const now = performance.now(), t = now - playingSince;
+      const ran = v && !v.paused && now - Math.max(playingSince, vp._playT || 0) > 4000;
+      if (v ? !(ran || t > 9000) : t < 4200) return;
       to(Math.round(tpos) + 1);
-    }, 4200);
+    }, 500);
 
     new IntersectionObserver(es => {
       inView = es[0].isIntersecting;
