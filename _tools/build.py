@@ -8,7 +8,7 @@ import json, os, html
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META = json.load(open(os.path.join(ROOT, '_tools', 'media.json')))  # slug -> {w,h,dur,full}
 E = html.escape
-V = '8'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
+V = '9'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
 
 PHONE = '777 272 802'; PHONE_TEL = '+420777272802'
 EMAIL = 'ggfilipvolf@gmail.com'
@@ -204,9 +204,9 @@ BALONIO_ADS = [
 ]
 
 LOGOS = [  # (soubor, název, výška relativně)
-  ('sony','Sony',0.62),('stelar','STELAR Advisory',0.9),('tesco','Tesco',0.95),('borgo','Borgo Agnese',1.15),
-  ('kras','Krasochatky',0.95),('vut','VUT Brno',1),('lada','Ladislav Bradna',0.95),('polepim','Polepim',1.15),
-  ('infina','Infina',1),('kora','KORA',0.95),
+  ('sony','Sony',0.62),('alux','Alux',1.15),('stelar','STELAR Advisory',0.9),('tesco','Tesco',0.95),('ecparfums','EC Parfums',0.9),
+  ('borgo','Borgo Agnese',1.15),('kras','Krasochatky',0.95),('hopa','HOPA Group',0.42),('vut','VUT Brno',1),('lada','Ladislav Bradna',0.95),
+  ('polepim','Polepim',1.15),('infina','Infina',1),('kora','KORA',0.95),
 ]
 BTS = [  # (soubor v assets/img, popis)
   ('bts/dsc09060','Tým Roxfilmu a Balonia na Czech Fashion Week'),('set-theatre','Natáčení v divadle'),('bts/rec-20d9c7ef','Filip Volf při konzultaci na placu'),
