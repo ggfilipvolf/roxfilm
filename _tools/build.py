@@ -8,7 +8,7 @@ import json, os, html
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META = json.load(open(os.path.join(ROOT, '_tools', 'media.json')))  # slug -> {w,h,dur,full}
 E = html.escape
-V = '9'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
+V = '10'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
 
 PHONE = '777 272 802'; PHONE_TEL = '+420777272802'
 EMAIL = 'ggfilipvolf@gmail.com'
@@ -309,6 +309,27 @@ def index():
   </div>
 </section>
 ''')
+    # PRO KOHO (světlá) – tým, kdo, pás log klientů
+    logos = ''.join(f'<li><img src="assets/logos/{n}.png" alt="{E(t)}" loading="lazy" style="--h:{h}"></li>' for n, t, h in LOGOS)
+    o.append(f'''<section class="sec sec--light sec--clients" id="pro-koho">
+  <div class="wrap"><span class="label" data-reveal>Točili jsme pro</span></div>
+  <div class="marquee" data-reveal aria-label="Klienti a partneři"><ul class="marquee__track">{logos}</ul></div>
+  <div class="wrap who-wrap">
+    <div class="who">
+      <div class="who__text" data-reveal>
+        <span class="label">Pro koho točíme</span>
+        <h2 class="t-h2" style="margin-top:16px">Produkce, která táhne za jeden provaz.</h2>
+      </div>
+      <figure style="margin:0;--d:.1s" data-reveal>{photo('set-44', 'Tým Roxfilmu s klienty na natáčení', 'who__team')}</figure>
+    </div>
+    <div class="aud">
+      <figure data-reveal>{photo('set-red-2', 'Rozhovor před kamerou ve studiu')}<h3 class="t-h3">Osobní značky</h3><p>Finanční poradci, makléři, lékaři a odborníci, kteří chtějí být tváří svého oboru.</p></figure>
+      <figure data-reveal style="--d:.08s">{photo('set-restaurant', 'Natáčení v restauraci')}<h3 class="t-h3">Firmy s příběhem</h3><p>Gastro, architektura, služby a výroba. Majitel ví, co umí, jen to zatím není vidět.</p></figure>
+      <figure data-reveal style="--d:.16s">{photo('set-opera', 'Natáčení v divadle')}<h3 class="t-h3">Instituce a eventy</h3><p>Školy, obchodní centra a velké firmy, které potřebují točit ve velkém a bez chyby.</p></figure>
+    </div>
+  </div>
+</section>
+''')
     # REELS – první práce
     o.append(f'''<section class="sec" id="reels">
   <div class="wrap">{sec_head('Reels', 'Krátká videa, která lidi zastaví.', 'Pro osobní značky, firmy i eventy. Natočená pro mobil a střižená na první tři vteřiny.')}</div>
@@ -329,27 +350,6 @@ def index():
       </a>
 ''')
     o.append('    </div>\n  </div>\n</section>\n')
-    # PRO KOHO (světlá) – tým, kdo, pás log klientů
-    logos = ''.join(f'<li><img src="assets/logos/{n}.png" alt="{E(t)}" loading="lazy" style="--h:{h}"></li>' for n, t, h in LOGOS)
-    o.append(f'''<section class="sec sec--light" id="pro-koho">
-  <div class="wrap">
-    <div class="who">
-      <div class="who__text" data-reveal>
-        <span class="label">Pro koho točíme</span>
-        <h2 class="t-h2" style="margin-top:16px">Produkce, která táhne za jeden provaz.</h2>
-      </div>
-      <figure style="margin:0;--d:.1s" data-reveal>{photo('set-44', 'Tým Roxfilmu s klienty na natáčení', 'who__team')}</figure>
-    </div>
-    <div class="aud">
-      <figure data-reveal>{photo('set-red-2', 'Rozhovor před kamerou ve studiu')}<h3 class="t-h3">Osobní značky</h3><p>Finanční poradci, makléři, lékaři a odborníci, kteří chtějí být tváří svého oboru.</p></figure>
-      <figure data-reveal style="--d:.08s">{photo('set-restaurant', 'Natáčení v restauraci')}<h3 class="t-h3">Firmy s příběhem</h3><p>Gastro, architektura, služby a výroba. Majitel ví, co umí, jen to zatím není vidět.</p></figure>
-      <figure data-reveal style="--d:.16s">{photo('set-opera', 'Natáčení v divadle')}<h3 class="t-h3">Instituce a eventy</h3><p>Školy, obchodní centra a velké firmy, které potřebují točit ve velkém a bez chyby.</p></figure>
-    </div>
-    <span class="label clients__label" data-reveal>Točili jsme pro</span>
-  </div>
-  <div class="marquee" data-reveal aria-label="Klienti a partneři"><ul class="marquee__track">{logos}</ul></div>
-</section>
-''')
     # PORTFOLIO
     o.append(f'''<section class="sec" id="prace">
   <div class="wrap">

@@ -354,3 +354,7 @@ p{margin:0}
   [data-reveal]{opacity:1;transform:none;transition:none}
   .scrollhint i{animation:none}
 }
+/* pás log hned pod spoluprací */
+.sec--clients{padding-top:clamp(56px,7vw,96px)}
+.sec--clients .marquee{margin-top:22px}
+.who-wrap{margin-top:clamp(72px,9vw,140px)}
