@@ -8,7 +8,7 @@ import json, os, html
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META = json.load(open(os.path.join(ROOT, '_tools', 'media.json')))  # slug -> {w,h,dur,full}
 E = html.escape
-V = '7'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
+V = '8'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
 
 PHONE = '777 272 802'; PHONE_TEL = '+420777272802'
 EMAIL = 'ggfilipvolf@gmail.com'
@@ -93,6 +93,7 @@ def nav(home=False):
     <li><a href="{p}#case-studies">Case studies</a></li>
     <li><a href="{p}#prace">Práce</a></li>
     <li><a href="{p}#o-nas">O nás</a></li>
+    <li><a href="pujcovna.html">Půjčovna</a></li>
     <li><a class="btn" href="{p}#kontakt">Napište nám {ARROW}</a></li>
   </ul>
 </header>
@@ -148,41 +149,44 @@ def sec_head(label, title, text=''):
 
 # ---------------- data ----------------
 PORTFOLIO = [
-  ('drive/kerndl-tesco','Kerndl × Tesco','Spot pro vína Kerndl přímo v prodejně Tesco.','spot'),
-  ('drive/villa-naya','Villa Naya','Luxusní vila v Chorvatsku. Dron, interiér, moře.','spot'),
-  ('drive/richie-flawless-ice','Richie ft. Elkoo – Flawless Ice','Hudební klip. Neon, pohyb, noc.','klip'),
-  ('drive/ec-parfums','EC Parfums','Firemní spot z výroby a skladu.','spot'),
-  ('drive/az-tower','AZ Tower','Spot pro reklamní plochu na nejvyšší budově v Česku.','spot'),
-  ('drive/rich-fouad-lets-slide','Rich Fouad – Let’s Slide','Klip ve formátu kina.','klip'),
-  ('drive/gymnazium-blansko','Gymnázium Blansko','Trailer, který přesvědčí uchazeče.','event'),
-  ('drive/promoce-fch','Promoce FCH VUT','Celý obřad v jednom filmu.','event'),
-  ('drive/zs-erbenova','ZŠ Erbenova','Video pro základní školu v Blansku.','event'),
-  ('opatija-angels','Opatija Angels','Teambuilding a obsah pro majitele vil.','spot'),
   ('porsche','Porsche','Kamera riggovaná ze všech stran auta.','spot'),
   ('ben-cristovao-omluva','Ben Cristovao – Omluva','Klip postavený na siluetách.','klip'),
+  ('opatija-angels','Opatija Angels','Teambuilding a obsah pro majitele vil.','spot'),
   ('tesco-velikonoce','Tesco – Velikonoce','Velikonoční TV spot.','spot'),
-  ('vut-opera','VUT – chemická opera','Tři natáčecí dny, jedna premiéra.','event'),
-  ('sergei-barracuda','Sergei Barracuda – Hvězdný prach','Obří jeřáb, několik lokací, dva dny.','klip'),
+  ('drive/ec-parfums','EC Parfums','Firemní spot z výroby a skladu.','spot'),
   ('sarka-stiborova','Šárka Stiborová – chirurgie','Klid, preciznost, důvěra.','spot'),
+  ('vut-opera','VUT – chemická opera','Tři natáčecí dny, jedna premiéra.','event'),
   ('hopa-group','HOPA Group','Letní spot pro developera. S kapkou humoru.','spot'),
-  ('yzomandias','Yzomandias – koncert','Jedna kamera, celý večer v pohybu.','event'),
-  ('semspoko','Semspoko','Klip z Vídně.','klip'),
-  ('pandies','Pandies','Módní značka mikin. Elegance v detailu.','spot'),
-  ('chorvatsko-spot','Kreativní spot','Mindful spot z teambuildingu v Chorvatsku.','spot'),
   ('3d-art','3D art','Klip, kde vznikal 3D svět scénu po scéně.','klip'),
   ('day-vlog','Day vlog','Celý den s klientem v jednom vlogu.','event'),
+  ('pandies','Pandies','Módní značka mikin. Elegance v detailu.','spot'),
+  ('drive/promoce-fch','Promoce FCH VUT','Celý obřad v jednom filmu.','event'),
+  ('sergei-barracuda','Sergei Barracuda – Hvězdný prach','Obří jeřáb, několik lokací, dva dny.','klip'),
+  ('drive/az-tower','AZ Tower','Spot pro reklamní plochu na nejvyšší budově v Česku.','spot'),
+  ('drive/kerndl-tesco','Kerndl × Tesco','Spot pro vína Kerndl přímo v prodejně Tesco.','spot'),
+  ('drive/villa-naya','Villa Naya','Luxusní vila v Chorvatsku. Dron, interiér, moře.','spot'),
+  ('drive/rich-fouad-lets-slide','Rich Fouad – Let’s Slide','Klip ve formátu kina.','klip'),
+  ('yzomandias','Yzomandias – koncert','Jedna kamera, celý večer v pohybu.','event'),
+  ('semspoko','Semspoko','Klip z Vídně.','klip'),
+  ('chorvatsko-spot','Kreativní spot','Mindful spot z teambuildingu v Chorvatsku.','spot'),
   ('vlog-workshop','Vlog z workshopu','Od příprav po poslední potlesk.','event'),
 ]
 CATS = [('all','Vše'),('spot','Spoty a reklamy'),('klip','Klipy'),('event','Eventy a instituce')]
 REELS = [
   ('drive/r-vecirek','Firemní večírek'),('polepim/polepim-5','Polepim – wrap'),('drive/r-villa-oresin','Villa Ořešín'),
-  ('drive/r-svatojanska-noc','Svatojánská noc – STELAR Advisory'),('polepim/audi-1-broll-warrior','Polepim – Audi'),
-  ('drive/r-influland','Report z Influlandu'),('drive/r-eli-prekvapko','Překvapení pro Eli'),('drive/r-gurdau','Gurdau'),
-  ('drive/r-attila','Attila'),('drive/r-vzdelavaci','Vzdělávací reels'),('drive/r-villa-naya-3','Villa Naya'),
-  ('drive/r-kora-1','Kora × Švancara'),('drive/r-infina','Infina'),('drive/r-ai-tvorba','Tvorba s AI'),
-  ('drive/r-reklamni','Reklamní reels'),('drive/r-vut-medailonek','VUT FCH – medailonek'),('drive/r-eli-oslava','Oslava'),
-  ('drive/r-villa-naya-1','Villa Naya – dron'),('drive/r-kora-3','Kora – pergola'),('polepim/polepim-8','Polepim – PPF'),
-  ('polepim/polepim-2-predni-sklo-chameleon','Polepim – chameleon'),
+  ('drive/r-svatojanska-noc','Svatojánská noc – STELAR Advisory'),('r2/hubert','Hubert Krochmalný'),('polepim/audi-1-broll-warrior','Polepim – Audi'),
+  ('drive/r-influland','Report z Influlandu'),('r2/denis-1','Denis Lazarov'),('drive/r-eli-prekvapko','Překvapení pro Eli'),
+  ('balonio-ads/11','Balonio – hala'),('drive/r-gurdau','Gurdau'),('r2/kacka-1','Kateřina Moravová'),
+  ('drive/r-attila','Attila'),('lada2/ko-kriteria','Ladislav Bradna – 3 KO kritéria'),('drive/r-villa-naya-3','Villa Naya'),
+  ('r2/infina-1','Infina'),('drive/r-kora-1','Architektura'),('r2/kora-rozhovor','Architektura – proměna dispozice'),
+  ('r2/natalie-d35','Natálie Kratochvílová'),('drive/r-infina','Infina – kancelář'),('r2/saiko','Balonio – Saiko'),
+  ('drive/r-ai-tvorba','Tvorba s AI'),('r2/infina-miska-1','Infina – Miška'),('r2/svatba-luky','Svatba'),
+  ('drive/r-reklamni','Reklamní reels'),('balonio/lr-realizace','Balonio – LR Health & Beauty'),('r2/denis-3','Denis Lazarov – studio'),
+  ('drive/r-vut-medailonek','VUT FCH – medailonek'),('r2/infl-ugc','Balonio – Influland'),('r2/natalie-5','Natálie Kratochvílová – rozpočet'),
+  ('drive/r-eli-oslava','Oslava'),('r2/svatba5','Balonio – svatba'),('r2/infina-2b18','Infina – nábor'),
+  ('drive/r-kora-3','Kora – zahrada'),('r2/recenze-maison','Recenze – Maison'),('balonio/recenze-borgo','Recenze – Borgo Agnese'),
+  ('polepim/polepim-8','Polepim – PPF'),('r2/kacka-2','Kateřina Moravová – konzultace'),('balonio/neon','Balonio – neon'),
+  ('balonio-ads/09','Balonio – Filip'),('r2/infina-miska-2','Infina – Miška 2'),('polepim/polepim-2-predni-sklo-chameleon','Zatmavení skel'),
 ]
 KRAS_DECK = [(f'kras-r{i}', f'Krasochatky – reels {i}') for i in range(1,7)] + \
   [(f'kras/krasonos-{i}', f'Krasonoš {i}') for i in range(1,8)] + [(f'kras/dron-{i}', f'Dron {i}') for i in range(1,7)]
@@ -196,7 +200,36 @@ BALONIO_ADS = [
   ('balonio-ads/11','Hala – detail'),('balonio-ads/strom','Vražení do stromu'),('balonio-ads/oktagon','Oktagon'),
   ('balonio-ads/ugc-2','UGC 2'),('balonio-ads/12','Hala – neon'),('balonio-ads/ugc-3','UGC 3'),
   ('balonio/ples','Ples – realizace'),('balonio/lr-realizace','LR – realizace'),('balonio/neon','Personalizovaný neon'),
+  ('r2/infl-ugc','Influland – UGC'),('r2/svatba5','Svatba – reklama'),('r2/neon-filip','Filip a neon'),('r2/saiko','Saiko – realizace'),
 ]
+
+LOGOS = [  # (soubor, název, výška relativně)
+  ('sony','Sony',0.62),('stelar','STELAR Advisory',0.9),('tesco','Tesco',0.95),('borgo','Borgo Agnese',1.15),
+  ('kras','Krasochatky',0.95),('vut','VUT Brno',1),('lada','Ladislav Bradna',0.95),('polepim','Polepim',1.15),
+  ('infina','Infina',1),('kora','KORA',0.95),
+]
+BTS = [  # (soubor v assets/img, popis)
+  ('bts/dsc09060','Tým Roxfilmu a Balonia na Czech Fashion Week'),('set-theatre','Natáčení v divadle'),('bts/rec-20d9c7ef','Filip Volf při konzultaci na placu'),
+  ('bts/13a2546','Natáčení s gimbalem'),('set-medical','Natáčení na klinice'),('bts/dsc08005','Filip Volf s klientem na Fashion Week'),
+  ('set-interview','Rozhovor na placu'),('bts/rec-971d47f7','Štáb při natáčení rozhovoru'),('filip-camera-1','Filip Volf s kamerou'),
+  ('bts/dsc08765','Filip Volf na Czech Fashion Week'),('bts/rec-b7705676','Příprava mikrofonu před natáčením'),('set-monitor','Kontrola záběru na monitoru'),
+  ('bts/13a1568','Natáčení v hale'),('bts/rec-15a9f438','Domluva záběru s klientkou'),('set-chair','Příprava scény'),
+  ('bts/dsc08996','Filip Volf natáčí na Fashion Week'),('bts/rec-74e830ec','Natáčení v restauraci'),('set-28','Štáb Roxfilmu'),
+  ('bts/dsc08171','Filip Volf v rozhovoru s hostem'),('bts/13a2106','Domluva s modelkou'),('team-boom','Štáb Roxfilmu při natáčení'),
+  ('bts/dsc08961','Filip Volf s modelkami'),
+]
+
+def collage(items, cls=''):
+    """koláž fotek v přirozeném poměru, klik otevře fotku přes celou obrazovku"""
+    return (f'<div class="collage {cls}">' + ''.join(
+        f'<figure data-reveal style="--d:{(i%3)*0.06:.2f}s"><button type="button" class="zoom" data-img="assets/img/{s}.jpg" aria-label="{E(a)}">'
+        f'<img src="assets/img/{s}.jpg" alt="{E(a)}" loading="lazy" decoding="async"></button></figure>'
+        for i, (s, a) in enumerate(items)) + '</div>')
+
+def filmstrip(items):
+    """plynulý pás fotek, který sám jede dokola"""
+    imgs = ''.join(f'<li><button type="button" class="zoom" data-img="assets/img/{s}.jpg" aria-label="{E(a)}"><img src="assets/img/{s}.jpg" alt="{E(a)}" loading="lazy" decoding="async"></button></li>' for s, a in items)
+    return f'<div class="marquee marquee--photos" data-reveal><ul class="marquee__track">{imgs}</ul></div>'
 
 def deck(items, label):
     cards = ''.join(
@@ -212,24 +245,24 @@ def deck(items, label):
 
 # pořadí na úvodní stránce
 CASES = [
-  dict(slug='kras', name='Krasochatky', sub='Chatky Jedovnice', file='krasochatky.html',
-       line='Brand manuál a veškerý obsah. Celá identita postavená na atmosféře místa.',
-       fig='300+ materiálů', frame=('r',['kras-r1','kras-r3','kras-r4','kras-r6'])),
-  dict(slug='lada', name='Ladislav Bradna', sub='Osobní značka · financování', file='ladislav-bradna.html',
-       line='Osobní značka finančního experta od nuly: web, brand manuál, natáčení každý měsíc, sítě.',
-       fig='Od června 2026', frame=('r',['lada/bonita','lada/auto','lada/deset-milionu','lada/rozchod'])),
-  dict(slug='balonio', name='Balonio', sub='Naše vlastní značka', file='balonio.html',
-       line='Luxusní fotobox, do kterého se vchází. Vizuál, obsah, sítě i reklama z jednoho týmu.',
-       fig='25+ reklamních videí', frame=('r',['balonio/recenze-artis','balonio/ples','balonio/lr-realizace','balonio/neon'])),
   dict(slug='alux', name='Alux', sub='Hliníkové pergoly', file='alux.html',
        line='Kampaně, reels a produktová videa u skutečných zákazníků. Více než rok spolupráce.',
        fig='150+ videí', frame=('h','alux-family')),
+  dict(slug='balonio', name='Balonio', sub='Naše vlastní značka', file='balonio.html',
+       line='Luxusní fotobox, do kterého se vchází. Vizuál, obsah, sítě i reklama z jednoho týmu.',
+       fig='100+ reklamních videí', frame=('r',['balonio-ads/11','balonio-ads/09','balonio-ads/07','balonio/recenze-borgo','r2/neon-filip'])),
+  dict(slug='kras', name='Krasochatky', sub='Chatky Jedovnice', file='krasochatky.html',
+       line='Celá identita na Instagramu postavená na atmosféře místa pomocí fotek a záběrů.',
+       fig='300+ materiálů', frame=('r',['kras-r1','kras-r3','kras-r4','kras-r6'])),
+  dict(slug='lada', name='Ladislav Bradna', sub='Osobní značka · financování', file='ladislav-bradna.html',
+       line='Osobní značka finančního experta od nuly: web, brand manuál, natáčení každý měsíc, sítě.',
+       fig='10+ videí každý měsíc', frame=('r',['lada2/ko-kriteria','lada/bonita','lada2/t12','lada/rozchod'])),
 ]
 
 def media_block(kind, ref, cls):
     if kind == 'h':
         return f'<div class="px {cls}" data-speed="0.06"><div class="px__in">{vp_any(ref)}</div></div>'
-    return f'<div class="px {cls} {cls}--reels" data-speed="0.06"><div class="px__in">' + ''.join(vp_any(r) for r in ref) + '</div></div>'
+    return f'<div class="px {cls} {cls}--reels" data-speed="0.06"><div class="px__in" style="grid-template-columns:repeat({len(ref)},1fr)">' + ''.join(vp_any(r) for r in ref) + '</div></div>'
 
 # ---------------- úvodní stránka ----------------
 def index():
@@ -264,17 +297,17 @@ def index():
   </div>
 </section>
 ''')
-    # SPOLUPRÁCE – hned po animaci
+    # SPOLUPRÁCE – hned po animaci: text plyne přes fotku podání ruky
     o.append('''<section class="statement" id="spoluprace" aria-label="Dlouhodobá spolupráce">
-  <div class="statement__pin"><div class="wrap">
-    <h2 class="t-statement statement__text">Zakládáme si na dlouhodobé spolupráci.</h2>
-    <p class="statement__sub">Dobré video vzniká tam, kde je důvěra. Kde si rozumíme a máme společný cíl. Spolupráce musí dávat smysl oběma stranám.</p>
-  </div></div>
+  <div class="statement__pin">
+    <div class="statement__bg"><img src="assets/img/handshake.jpg" alt="Filip Volf si podává ruku s klientem" decoding="async"></div>
+    <div class="statement__shade"></div>
+    <div class="wrap statement__copy">
+      <h2 class="t-statement statement__text">Zakládáme si na dlouhodobé spolupráci.</h2>
+      <p class="statement__sub">Dobré video vzniká tam, kde je důvěra. Kde si rozumíme a máme společný cíl. Spolupráce musí dávat smysl oběma stranám.</p>
+    </div>
+  </div>
 </section>
-<figure class="reveal-photo">
-  <div class="reveal-photo__frame"><img src="assets/img/handshake.jpg" alt="Filip Volf si podává ruku s klientem" loading="lazy" decoding="async"></div>
-  <figcaption class="label"><span>Filip Volf s klientem</span><span>Brno</span></figcaption>
-</figure>
 ''')
     # REELS – první práce
     o.append(f'''<section class="sec" id="reels">
@@ -296,14 +329,14 @@ def index():
       </a>
 ''')
     o.append('    </div>\n  </div>\n</section>\n')
-    # PRO KOHO (světlá) – tým, kdo, klienti
+    # PRO KOHO (světlá) – tým, kdo, pás log klientů
+    logos = ''.join(f'<li><img src="assets/logos/{n}.png" alt="{E(t)}" loading="lazy" style="--h:{h}"></li>' for n, t, h in LOGOS)
     o.append(f'''<section class="sec sec--light" id="pro-koho">
   <div class="wrap">
     <div class="who">
       <div class="who__text" data-reveal>
         <span class="label">Pro koho točíme</span>
-        <h2 class="t-h2" style="margin-top:16px">Produkce, která dotáhne i marketing.</h2>
-        <p>Strategie, natáčení, foto, střih, správa sítí i placená reklama. Nemusíte skládat tým z pěti dodavatelů. Máte jeden, který to natočí, postaví z toho obsah a dostane ho k lidem.</p>
+        <h2 class="t-h2" style="margin-top:16px">Produkce, která táhne za jeden provaz.</h2>
       </div>
       <figure style="margin:0;--d:.1s" data-reveal>{photo('set-44', 'Tým Roxfilmu s klienty na natáčení', 'who__team')}</figure>
     </div>
@@ -312,11 +345,9 @@ def index():
       <figure data-reveal style="--d:.08s">{photo('set-restaurant', 'Natáčení v restauraci')}<h3 class="t-h3">Firmy s příběhem</h3><p>Gastro, architektura, služby a výroba. Majitel ví, co umí, jen to zatím není vidět.</p></figure>
       <figure data-reveal style="--d:.16s">{photo('set-opera', 'Natáčení v divadle')}<h3 class="t-h3">Instituce a eventy</h3><p>Školy, obchodní centra a velké firmy, které potřebují točit ve velkém a bez chyby.</p></figure>
     </div>
-    <div class="clients" data-reveal>
-      <span class="label">Točili jsme pro</span>
-      <ul><li>Ladislav Bradna</li><li>STELAR Advisory</li><li>Šárka Stiborová</li><li>Borgo Agnese</li><li>Alux</li><li>Krasochatky</li><li>Polepim</li><li>VUT Brno</li><li>Tesco</li><li>Kerndl</li><li>HOPA Group</li><li>EC Parfums</li></ul>
-    </div>
+    <span class="label clients__label" data-reveal>Točili jsme pro</span>
   </div>
+  <div class="marquee" data-reveal aria-label="Klienti a partneři"><ul class="marquee__track">{logos}</ul></div>
 </section>
 ''')
     # PORTFOLIO
@@ -334,15 +365,11 @@ def index():
       </button>
 ''')
     o.append('    </div>\n  </div>\n</section>\n')
-    # ZA KAMEROU
-    bts = [('a','set-theatre','Natáčení v divadle'),('b','set-medical','Natáčení na klinice'),('c','set-interview','Rozhovor na placu'),
-           ('d','filip-camera-1','Filip Volf s kamerou'),('e','set-monitor','Kontrola záběru na monitoru'),('f','set-chair','Příprava scény'),
-           ('g','set-28','Štáb Roxfilmu'),('h','team-boom','Štáb Roxfilmu při natáčení')]
+    # ZA KAMEROU – koláž
     o.append(f'''<section class="sec sec--tight" id="za-kamerou">
   <div class="wrap">
     {sec_head('Za kamerou', 'Skutečné záběry z našich natáčení.', 'Žádná fotobanka. Lidé chtějí vidět, kdo stojí za kamerou.')}
-    <div class="bts">
-''' + ''.join(f'      <figure class="{c}" data-reveal style="--d:{(i%3)*0.07:.2f}s">{photo(s, a)}</figure>\n' for i, (c, s, a) in enumerate(bts)) + '''    </div>
+    {collage(BTS, 'bts')}
   </div>
 </section>
 ''')
@@ -413,6 +440,10 @@ def case_page(c, d):
             o.append('    </div>\n')
         elif t == 'deck':
             o.append('  </div>\n  ' + deck(blk['items'], blk['title']) + '\n  <div class="wrap">\n')
+        elif t == 'collage':
+            o.append('    ' + collage(blk['items']) + '\n')
+        elif t == 'filmstrip':
+            o.append('  </div>\n  ' + filmstrip(blk['items']) + '\n  <div class="wrap">\n')
         elif t == 'photos':
             o.append('    <div class="pgrid">\n' + ''.join(f'      <figure data-reveal style="--d:{(n%3)*0.07:.2f}s">{photo(s, a)}</figure>\n' for n, (s, a) in enumerate(blk['items'])) + '    </div>\n')
         o.append('  </div>\n</section>\n')
@@ -443,23 +474,27 @@ CASE_DATA = {
      dict(type='reels', label='Reels', title='Lidé z firmy před kamerou', text='Jedna z nejsilnějších komunikačních forem tohoto klienta.',
           items=[(f'alux-r{i:02d}', f'Alux – reels {i:02d}') for i in range(1,11)]),
    ],
-   next=('krasochatky.html','Krasochatky')),
- 'lada': dict(
-   desc='Ladislav Bradna – osobní značka finančního experta. Web, brand manuál, měsíčně 8 reels a vlog. Case study Roxfilm.',
-   hero=('r',['lada/bonita','lada/auto','lada/deset-milionu','lada/rozchod','lada/teaser-zavody']), og='assets/img/lada-portrait.jpg',
-   lead='Osobní značku experta na hypotéky a financování nemovitostí stavíme od června 2026. Nejdřív web, brand manuál a struktura obsahu. Od července natáčíme každý měsíc.',
-   facts=[('Klient','Ladislav Bradna'),('Obor','Hypotéky a financování'),('Od','Června 2026'),('Měsíčně','8 reels, 1 vlog, 2–3 karusely')],
-   before='Finanční expert s praxí a výsledky, kterého znali hlavně klienti z doporučení. Cíl: aby ho lidé znali dřív, než mu zavolají.',
-   did=['Web, brand manuál a struktura obsahu','Témata vymýšlíme spolu s ním, natáčení s klidem na placu','Každý měsíc reels, vlog „Den s Laďou“ a teasery','Sprint 32 dní v kuse: každý den jeden výstup'],
-   nums=[('4–5','poptávek ze sítí za první čtyři měsíce'),('8 + 1','reels a vlog každý měsíc'),('32','dní v kuse s denním výstupem')],
-   blocks=[
-     dict(type='reels', label='Reels', title='Otázky, které klienti opravdu řeší', text='Jedno téma, jedna myšlenka, titulky.', captions=True,
-          items=[('lada/bonita','Bonita a skladba příjmů'),('lada/auto','Nekupuj auto, kup byt'),('lada/deset-milionu','10 milionů a čerpání'),('lada/rozchod','Rozchod a hypotéka'),('lada/teaser-zavody','Teaser: den na závodech')]),
-     dict(type='reels', label='YouTube', title='Vlog „Den s Laďou“', text='Delší formát na YouTube. Ke každému vlogu teasery před vydáním i po něm.', captions=True,
-          items=[('lada/teaser-kojetin','Trailer: Kojetín'),('lada/teaser-flip','Flip nemovitosti za 6 hodin'),('lada/teaser-zavody','Rybářské závody')]),
-     dict(type='photos', label='Foto', title='Foto pro web a sítě', items=[('lada-portrait','Ladislav Bradna, portrét'),('lada-process','Ladislav Bradna na ulici'),('lada-about','Ladislav Bradna v zahradě'),('lada-steps','Ladislav Bradna s tabletem')]),
-   ],
    next=('balonio.html','Balonio')),
+ 'lada': dict(
+   desc='Ladislav Bradna – osobní značka finančního experta. Web, brand manuál, každý měsíc 10+ videí a 15+ výstupů na sítě. Case study Roxfilm.',
+   hero=('r',['lada2/ko-kriteria','lada/bonita','lada2/t12','lada/rozchod','lada2/t08']), og='assets/img/lada-portrait.jpg',
+   lead='Osobní značku experta na hypotéky a financování nemovitostí stavíme od června 2026. Nejdřív portrétní focení, web, brand manuál a struktura obsahu. Od července natáčíme každý měsíc.',
+   facts=[('Klient','Ladislav Bradna'),('Obor','Hypotéky a financování'),('Od','Června 2026'),('Měsíčně','10+ videí, 15+ výstupů')],
+   before='Finanční expert s praxí a výsledky, kterého znali hlavně klienti z doporučení. Cíl: aby ho lidé znali dřív, než mu zavolají.',
+   did=['Portrétní focení, web, brand manuál a struktura obsahu','Témata vymýšlíme spolu s ním, natáčení s klidem na placu','Každý měsíc reels, vlog „Den s Laďou“ a teasery','Sprint 32 dní v kuse: každý den jeden výstup'],
+   nums=[('10+','videí každý měsíc'),('15+','výstupů měsíčně na sítě'),('32','dní v kuse s denním výstupem')],
+   blocks=[
+     dict(type='filmstrip', label='Foto', title='Portrétní focení', text='Tím to celé začalo. Fotky pro web, sítě i brand manuál.',
+          items=[('lada/ld-01', 'Ladislav Bradna, portrétní focení'), ('lada/ld-02', 'Ladislav Bradna, portrétní focení'), ('lada/ld-03', 'Ladislav Bradna, portrétní focení'), ('lada/ld-04', 'Ladislav Bradna, portrétní focení'), ('lada/ld-05', 'Ladislav Bradna, portrétní focení'), ('lada/ld-06', 'Ladislav Bradna, portrétní focení'), ('lada/ld-07', 'Ladislav Bradna, portrétní focení'), ('lada/ld-08', 'Ladislav Bradna, portrétní focení'), ('lada/ld-09', 'Ladislav Bradna, portrétní focení'), ('lada/ld-10', 'Ladislav Bradna, portrétní focení'), ('lada/ld-11', 'Ladislav Bradna, portrétní focení'), ('lada/ld-12', 'Ladislav Bradna, portrétní focení'), ('lada/ld-13', 'Ladislav Bradna, portrétní focení'), ('lada/ld-14', 'Ladislav Bradna, portrétní focení'), ('lada/ld-15', 'Ladislav Bradna, portrétní focení'), ('lada/ld-16', 'Ladislav Bradna, portrétní focení'), ('lada-portrait', 'Ladislav Bradna, portrét'), ('lada-process', 'Ladislav Bradna na ulici'), ('lada-about', 'Ladislav Bradna v zahradě'), ('lada-steps', 'Ladislav Bradna s tabletem')]),
+     dict(type='reels', label='Reels', title='Otázky, které klienti opravdu řeší', text='Jedno téma, jedna myšlenka, titulky.', captions=True,
+          items=[('lada2/ko-kriteria','3 KO kritéria v účetnictví'),('lada/bonita','Bonita a skladba příjmů'),('lada/rozchod','Rozchod a hypotéka'),('lada/auto','Nekupuj auto, kup byt'),('lada/deset-milionu','10 milionů a čerpání')]),
+     dict(type='deck', label='YouTube', title='Vlog „Den s Laďou“', text='Delší formát na YouTube. Ke každému vlogu čtyři teasery před vydáním i po něm.',
+          items=[('lada2/t01','Startuje série vlogů'),('lada2/t02','Díra ve střeše'),('lada/teaser-flip','Flip nemovitosti za 6 hodin'),('lada2/t04','Židle na 4 nohy'),
+                 ('lada/teaser-kojetin','Trailer: Kojetín'),('lada2/t06','Levný pozemek od města'),('lada2/t07','Ušetřil čtvrt milionu'),('lada2/t08','Leoš a vlastní tank'),
+                 ('lada2/t09','Evidenční list bytu'),('lada2/t10','Moudro: odpočinek'),('lada2/t11','Moudro: stejní lidé'),('lada2/t12','1000 ryb za 4 hodiny'),
+                 ('lada/teaser-zavody','Den na závodech'),('lada2/t14','Trailer: rybářský závod')]),
+   ],
+   next=('alux.html','Alux')),
  'kras': dict(
    desc='Krasochatky, Jedovnice – brand manuál, foto, video a sítě od Roxfilmu. 300+ materiálů z jednoho vizuálního světa.',
    hero=('r',['kras-r1','kras-r2','kras-r3','kras-r4','kras-r6']), og='assets/img/kras-1.jpg',
@@ -476,21 +511,26 @@ CASE_DATA = {
    next=('ladislav-bradna.html','Ladislav Bradna')),
  'balonio': dict(
    desc='Balonio – luxusní fotobox, do kterého se vchází. Vlastní značka, pro kterou Roxfilm dělá vizuál, obsah, sítě i reklamu.',
-   hero=('r',['balonio/recenze-artis','balonio/ples','balonio/lr-realizace','balonio/recenze-borgo','balonio/neon']), og='assets/img/balonio-1.jpg',
+   hero=('r',['balonio-ads/11','balonio-ads/09','balonio-ads/07','balonio/recenze-borgo','r2/neon-filip']), og='assets/img/balonio-1.jpg',
    lead='Balonio není fotokoutek. Je to zážitek, do kterého se vchází. Je to naše vlastní značka a Roxfilm pro ni dělá celý marketing: vizuál, obsah, sítě i reklamu.',
    facts=[('Značka','Balonio'),('Obor','Luxusní fotobox na akce'),('Rozsah','Vizuál, foto, video, sítě, Meta reklama'),('Web','balonio.cz')],
    before='Zážitek, který se na fotce těžko popisuje. A akce, ze kterých jde vytěžit obsah na další týdny, když se na to myslí dopředu.',
    did=['Recenzní reels přímo od klientů na akcích','Realizační videa z eventů','Reklamní videa pro Meta kampaně','Systém: z jedné akce sedm a více výstupů'],
-   nums=[('7+','výstupů z každé akce'),('25+','reklamních videí a UGC pro Meta'),('4×','týdně nový obsah na sítích')],
+   nums=[('7+','výstupů z každé akce'),('100+','reklamních videí pro UGC a Meta'),('4×','týdně nový obsah na sítích')],
    blocks=[
      dict(type='deck', label='Meta reklama', title='Reklamy, UGC a realizace',
           text='Všechno, co pro Balonio vzniklo do kampaní a na sítě.',
           items=BALONIO_ADS),
      dict(type='reels', label='Recenze', title='Klienti mluví sami za sebe', text='Přímo na akci.', captions=True,
-          items=[('balonio/recenze-artis','Recenze – Artis'),('balonio/recenze-borgo','Recenze – Borgo Agnese'),('balonio/recenze-losterie',"Recenze – L'Osteria"),('balonio/recenze-sms','Recenze – SMS')]),
-     dict(type='photos', label='Foto', title='Foto', items=[(f'balonio-{i}','Balonio') for i in range(1,8)]),
+          items=[('balonio/recenze-borgo','Recenze – Borgo Agnese'),('r2/recenze-maison','Recenze – Maison'),('balonio/recenze-artis','Recenze – Artis'),('balonio/recenze-losterie',"Recenze – L'Osteria"),('balonio/recenze-sms','Recenze – SMS')]),
+     dict(type='collage', label='Foto', title='Z natáčení a z akcí', text='Kliknutím fotku zvětšíte.', items=[
+          ('balonio-1','Balonio na akci'),('bts/13a1426','Natáčení Balonia v hale'),('bts/13a2087','Příprava záběru'),('balonio-2','Balonio na akci'),
+          ('bts/13a1574','Natáčení v hale'),('bts/13a2089','Domluva s modelkou'),('balonio-3','Balonio na akci'),('bts/13a1430','Natáčení Balonia v hale'),
+          ('bts/13a2114','Příprava scény'),('balonio-4','Balonio na akci'),('bts/13a1569','Natáčení v hale'),('bts/13a2228','Natáčení modelky'),
+          ('balonio-5','Balonio na akci'),('bts/13a2109','Úprava balónků'),('bts/dsc09042','Balonio na Czech Fashion Week'),('balonio-6','Balonio na akci'),
+          ('bts/13a2081','Balonio v hale'),('bts/13a1472','Kameraman při natáčení'),('balonio-7','Balonio na akci'),('bts/dsc08733','Balonio na Czech Fashion Week')]),
    ],
-   next=('alux.html','Alux')),
+   next=('krasochatky.html','Krasochatky')),
 }
 
 def page_404():

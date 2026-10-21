@@ -232,9 +232,19 @@
       const r = sec.getBoundingClientRect();
       if (r.bottom < 0 || r.top > VH) return;
       const p = clamp(-r.top / (r.height - VH));
-      const lit = Math.round(range(p, 0.04, 0.6) * ws.length);
+      const bg = sec._bg || (sec._bg = $('.statement__bg', sec)), img = sec._img || (sec._img = $('.statement__bg img', sec));
+      const sh = sec._sh || (sec._sh = $('.statement__shade', sec)), cp = sec._cp || (sec._cp = $('.statement__copy', sec));
+      // fotka podání ruky se rozevře za textem
+      const o = ease(range(p, 0, 0.42));
+      const ins = `inset(${((1 - o) * 18).toFixed(2)}% ${((1 - o) * 22).toFixed(2)}%)`;
+      if (bg) { bg.style.clipPath = ins; bg.style.webkitClipPath = ins; }
+      if (img) img.style.transform = `scale(${(1.18 - 0.18 * o).toFixed(4)}) translate3d(0,${((p - 0.5) * -4).toFixed(2)}%,0)`;
+      if (sh) sh.style.opacity = range(p, 0.12, 0.4).toFixed(3);
+      // text plyne jinou rychlostí než fotka
+      if (cp) cp.style.transform = `translate3d(0,${((1 - p) * VH * 0.22).toFixed(1)}px,0)`;
+      const lit = Math.round(range(p, 0.28, 0.72) * ws.length);
       ws.forEach((w, i) => w.classList.toggle('on', i < lit));
-      sec.classList.toggle('is-done', p > 0.62);
+      sec.classList.toggle('is-done', p > 0.74);
     });
   }
 
@@ -261,6 +271,29 @@
       o.in.style.transform = `translate3d(0,${(-prog * o.sp * r.height).toFixed(1)}px,0)`;
     }
   }
+
+  /* ---------- nekonečné pásy (loga, fotky) ---------- */
+  $$('.marquee__track').forEach(tr => {
+    const kids = [...tr.children];
+    kids.forEach(k => { const c = k.cloneNode(true); c.setAttribute('aria-hidden', 'true'); c.querySelectorAll('button').forEach(b => b.tabIndex = -1); tr.appendChild(c); });
+    const setDur = () => { const w = tr.scrollWidth / 2; const speed = tr.closest('.marquee--photos') ? 45 : 55; tr.style.animationDuration = (w / speed).toFixed(1) + 's'; };
+    setDur(); addEventListener('load', setDur);
+  });
+
+  /* ---------- fotka přes celou obrazovku ---------- */
+  const lb = document.createElement('div');
+  lb.className = 'lightbox'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true');
+  lb.innerHTML = '<img alt="">';
+  document.body.appendChild(lb);
+  const lbImg = $('img', lb);
+  document.addEventListener('click', e => {
+    const z = e.target.closest('.zoom'); if (!z) return;
+    lbImg.src = z.dataset.img; lbImg.alt = z.getAttribute('aria-label') || '';
+    lb.classList.add('is-open'); if (lenis) lenis.stop();
+  });
+  const lbClose = () => { lb.classList.remove('is-open'); if (lenis) lenis.start(); };
+  lb.addEventListener('click', lbClose);
+  addEventListener('keydown', e => { if (e.key === 'Escape' && lb.classList.contains('is-open')) lbClose(); });
 
   /* ---------- reveal ---------- */
   if ('IntersectionObserver' in window) {
