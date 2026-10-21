@@ -272,12 +272,46 @@
     }
   }
 
-  /* ---------- nekonečné pásy (loga, fotky) ---------- */
-  $$('.marquee__track').forEach(tr => {
-    const kids = [...tr.children];
-    kids.forEach(k => { const c = k.cloneNode(true); c.setAttribute('aria-hidden', 'true'); c.querySelectorAll('button').forEach(b => b.tabIndex = -1); tr.appendChild(c); });
-    const setDur = () => { const w = tr.scrollWidth / 2; const speed = tr.closest('.marquee--photos') ? 45 : 55; tr.style.animationDuration = (w / speed).toFixed(1) + 's'; };
-    setDur(); addEventListener('load', setDur);
+  /* ---------- nekonečné pásy (loga, fotky) – každá položka se posouvá zvlášť, žádná obří vrstva ---------- */
+  $$('.marquee').forEach(mq => {
+    const tr = $('.marquee__track', mq);
+    const photos = mq.classList.contains('marquee--photos');
+    const speed = photos ? 40 : 44;              // px za sekundu
+    const gap = photos ? 12 : Math.max(48, Math.min(96, innerWidth * 0.06));
+    let items = [], total = 0, offset = 0, last = 0, hover = false, vis = false;
+    const base = [...tr.children];
+    function measure() {
+      // doplň kopie, dokud pás není aspoň o šířku obrazovky delší
+      items = [...tr.children];
+      let w = items.reduce((s, li) => s + li.getBoundingClientRect().width + gap, 0);
+      let guard = 0;
+      while (w > 0 && w < mq.clientWidth * 2 + 400 && guard++ < 6) {
+        base.forEach(li => { const c = li.cloneNode(true); c.setAttribute('aria-hidden', 'true'); c.querySelectorAll('button').forEach(b => b.tabIndex = -1); tr.appendChild(c); });
+        items = [...tr.children];
+        w = items.reduce((s, li) => s + li.getBoundingClientRect().width + gap, 0);
+      }
+      let x = 0;
+      items.forEach(li => { li._x = x; li._w = li.getBoundingClientRect().width; x += li._w + gap; });
+      total = x;
+    }
+    function tick(t) {
+      const dt = last ? Math.min(64, t - last) : 16; last = t;
+      if (vis && !(photos && hover) && total) {
+        offset = (offset + speed * dt / 1000) % total;
+        for (const li of items) {
+          let x = li._x - offset; if (x < -li._w - gap) x += total;
+          li.style.transform = `translate3d(${x.toFixed(2)}px,-50%,0)`;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    mq.addEventListener('mouseenter', () => hover = true);
+    mq.addEventListener('mouseleave', () => hover = false);
+    new IntersectionObserver(es => { vis = es[0].isIntersecting; }, { rootMargin: '200px' }).observe(mq);
+    const imgs = $$('img', tr);
+    Promise.all(imgs.map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; }))).then(() => { measure(); vis = true; });
+    addEventListener('resize', () => { measure(); });
+    requestAnimationFrame(tick);
   });
 
   /* ---------- fotka přes celou obrazovku ---------- */

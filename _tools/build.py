@@ -8,7 +8,7 @@ import json, os, html
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META = json.load(open(os.path.join(ROOT, '_tools', 'media.json')))  # slug -> {w,h,dur,full}
 E = html.escape
-V = '10'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
+V = '11'  # verze CSS/JS (při změně zvyšte, ať se nenačítá stará z cache)
 
 PHONE = '777 272 802'; PHONE_TEL = '+420777272802'
 EMAIL = 'ggfilipvolf@gmail.com'
@@ -230,7 +230,7 @@ def collage(items, cls=''):
 
 def filmstrip(items):
     """plynulý pás fotek, který sám jede dokola"""
-    imgs = ''.join(f'<li><button type="button" class="zoom" data-img="assets/img/{s}.jpg" aria-label="{E(a)}"><img src="assets/img/{s}.jpg" alt="{E(a)}" loading="lazy" decoding="async"></button></li>' for s, a in items)
+    imgs = ''.join(f'<li><button type="button" class="zoom" data-img="assets/img/{s}.jpg" aria-label="{E(a)}"><img src="assets/img/{s}.jpg" alt="{E(a)}" decoding="async"></button></li>' for s, a in items)
     return f'<div class="marquee marquee--photos" data-reveal><ul class="marquee__track">{imgs}</ul></div>'
 
 def deck(items, label):
@@ -312,7 +312,7 @@ def index():
 </section>
 ''')
     # PRO KOHO (světlá) – tým, kdo, pás log klientů
-    logos = ''.join(f'<li><img src="assets/logos/{n}.png" alt="{E(t)}" loading="lazy" style="--h:{h}"></li>' for n, t, h in LOGOS)
+    logos = ''.join(f'<li><img src="assets/logos/{n}.png" alt="{E(t)}" style="--h:{h}"></li>' for n, t, h in LOGOS)
     o.append(f'''<section class="sec sec--light sec--clients" id="pro-koho">
   <div class="wrap"><span class="label" data-reveal>Točili jsme pro</span></div>
   <div class="marquee" data-reveal aria-label="Klienti a partneři"><ul class="marquee__track">{logos}</ul></div>
