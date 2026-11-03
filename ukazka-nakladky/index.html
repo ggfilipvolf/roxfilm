@@ -1,0 +1,427 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Plánovač nakládek – ukázka</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: dispečerský list — hlavička s výsledkem, vlevo 3D kamion, vpravo detail palety a legenda, dole plánek shora a tabulka stohů */
+:root{
+  --bg:#eef1f4; --panel:#ffffff; --ink:#18212b; --muted:#5b6774; --line:#d5dbe2;
+  --accent:#1f4e8c; --accent-ink:#ffffff; --scene:#dfe4ea; --floor:#c9d0d8; --wall:#8a96a3;
+  --warn:#9a3412; --warn-bg:#fff1e6; --ok:#166534; --ok-bg:#e9f7ee;
+  --f-display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Barlow","Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12171d; --panel:#1a2129; --ink:#e7ecf1; --muted:#9aa6b2; --line:#2c3640;
+  --accent:#6ea3e6; --accent-ink:#0d1520; --scene:#1c242d; --floor:#2a333d; --wall:#6d7a87;
+  --warn:#fdba74; --warn-bg:#2a1a10; --ok:#86efac; --ok-bg:#10261a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12171d; --panel:#1a2129; --ink:#e7ecf1; --muted:#9aa6b2; --line:#2c3640;
+  --accent:#6ea3e6; --accent-ink:#0d1520; --scene:#1c242d; --floor:#2a333d; --wall:#6d7a87;
+  --warn:#fdba74; --warn-bg:#2a1a10; --ok:#86efac; --ok-bg:#10261a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 40px}
+.wrap{max-width:1320px;margin:0 auto;display:grid;gap:16px}
+h1,h2{font-family:var(--f-display);margin:0;text-wrap:balance}
+h1{font-size:30px;font-weight:700;letter-spacing:.01em}
+h2{font-size:17px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+header{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-end;justify-content:space-between}
+.sub{color:var(--muted);font-size:15px}
+.kpis{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline}
+.kpi b{font-family:var(--f-display);font-size:28px;font-weight:700}
+.kpi span{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.06em;margin-left:4px}
+.carrier{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.carrier code{font-family:var(--f-display);font-size:19px;font-weight:600;user-select:all}
+.carrier small{color:var(--muted)}
+.warnbox{background:var(--warn-bg);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent);border-radius:8px;padding:10px 12px;font-weight:600}
+.warnbox.ok{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+.loosebox{background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:10px 12px;font-size:14px}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,540px);gap:16px;align-items:start}
+@media (max-width:1100px){.main{grid-template-columns:1fr}}
+.legend{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+table.lines{font-size:13px}
+table.lines td{padding:5px 6px}
+table.lines tr.ln{cursor:pointer}
+table.lines tr.ln:hover td{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+table.lines tr.sel td{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+table.lines .no{font-weight:700;white-space:nowrap}
+table.lines .desc{color:var(--muted);font-size:12px}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:5px;padding:1px 6px;font-family:var(--f-display);font-weight:700;font-size:13px;color:#14181c;white-space:nowrap;margin:1px 0}
+.composed{display:grid;gap:4px;margin-top:10px;font-size:13px}
+.scenebox{position:relative;background:var(--scene);border:1px solid var(--line);border-radius:8px;overflow:hidden;min-height:440px;height:58vh;max-height:620px}
+#scene{position:absolute;inset:0}
+.views{position:absolute;top:10px;left:10px;display:flex;flex-wrap:wrap;gap:6px;z-index:2}
+.hint{position:absolute;bottom:8px;left:10px;font-size:12px;color:var(--muted);z-index:2}
+.side{display:grid;gap:16px;align-content:start;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px}
+.detail dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:10px 0 0}
+.detail dt{color:var(--muted)}
+.detail dd{margin:0;font-weight:600}
+.detail .big{font-family:var(--f-display);font-size:22px;font-weight:700;display:flex;gap:10px;align-items:center}
+.sw{display:inline-grid;place-items:center;min-width:26px;padding:0 4px;height:26px;border-radius:5px;font-family:var(--f-display);font-weight:700;color:#14181c;flex:none}
+.legend{display:grid;gap:6px;margin-top:10px}
+.legend button{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;text-align:left;padding:6px 8px}
+.legend small{display:block;color:var(--muted);font-size:12px}
+.lower{display:grid;grid-template-columns:1fr;gap:16px}
+.leftcol{display:grid;gap:16px;align-content:start;min-width:0}
+#plan{max-width:100%;height:auto}
+@media (max-width:900px){.lower{grid-template-columns:1fr}}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+td.r,th.r{text-align:right}
+svg text{font-family:var(--f-display)}
+.muted{color:var(--muted)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{font-family:var(--f-display);font-weight:600;font-size:15px}
+.note{font-size:13px;color:var(--muted)}
+
+.mail textarea.old{width:100%;min-height:290px;resize:none;overflow:hidden;display:block;box-sizing:border-box;font:inherit;font-size:14px;line-height:1.5;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-top:10px}
+.mail .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.mail .row small{color:var(--muted)}
+
+.mail .fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:10px;margin-top:10px}
+@media (max-width:520px){.mail .fields{grid-template-columns:1fr}}
+.mail label{display:grid;gap:3px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.mail input{font:inherit;font-size:15px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 10px;width:100%;box-sizing:border-box}
+.mail input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.mail input.empty{border-color:var(--warn);background:var(--warn-bg)}
+
+.carrier-card .top{margin-top:10px;display:grid;gap:2px}
+.carrier-card .top b.big{font-family:var(--f-display);font-size:24px;font-weight:700}
+.carrier-card .price{margin-top:10px;display:grid;gap:6px}
+.carrier-card .price div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding-bottom:5px;font-size:14px}
+.carrier-card .price b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.carrier-card table{margin-top:10px;font-size:13px}
+.carrier-card .src{font-size:12px;color:var(--muted);margin-top:8px}
+</style>
+
+<div class="wrap">
+  <nav class="tabs" id="tabs" aria-label="Nakládky"></nav>
+  <header>
+    <div>
+      <h1 id="title"></h1>
+      <div class="sub" id="dest"></div>
+      <div class="note" id="note" hidden></div>
+    </div>
+    <div class="kpis num" id="kpis"></div>
+  </header>
+
+  <div class="warnbox" id="warn" hidden></div>
+  <div class="loosebox" id="loose" hidden></div>
+
+  <div class="carrier">
+    <span class="muted">Pro dopravce / OVD-O:</span>
+    <code id="ctext"></code>
+    <button id="copy" type="button">Kopírovat</button>
+    <small id="copied" hidden>Zkopírováno</small>
+  </div>
+
+  <div class="main">
+   <div class="leftcol">
+    <div class="scenebox">
+      <div class="views" role="group" aria-label="Pohled">
+        <button type="button" data-view="iso" class="on">3D</button>
+        <button type="button" data-view="top">Shora</button>
+        <button type="button" data-view="side">Z boku</button>
+        <button type="button" data-view="back">Zezadu (dveře)</button>
+        <button type="button" data-view="front">Zepředu</button>
+      </div>
+      <div id="scene"></div>
+      <div class="hint">Táhni myší = otáčení · kolečko = zoom · klik na paletu = detail</div>
+    </div>
+    <div class="card">
+      <h2>Plánek shora</h2>
+      <div class="scroll"><svg id="plan" role="img" aria-label="Plánek kamionu shora"></svg></div>
+    </div>
+   </div>
+    <div class="side">
+      <div class="card">
+        <h2>Řádky a přiřazení na palety</h2>
+        <p class="note">V pořadí jako v OPE / nakládce. Klik na řádek ukáže palety v kamionu.</p>
+        <div class="scroll"><table class="lines" id="lines"></table></div>
+        <div class="composed" id="composed"></div>
+      </div>
+      <div class="card detail" id="detail"></div>
+      <div class="card carrier-card" id="carcard" hidden>
+        <h2>Dopravce a cena</h2>
+        <div id="carbody"></div>
+      </div>
+      <div class="card mail" id="mailcard" hidden>
+        <h2>Poptávka pro dopravce</h2>
+        <div class="fields">
+          <label>Datum nakládky<input type="date" id="maildate" min="2026-01-01" max="2026-12-31"></label>
+          <label>Vykládka – město + PSČ<input type="text" id="mailcity" placeholder="např. VÉMARS 95470" autocomplete="off"></label>
+        </div>
+        <textarea id="mailtext" spellcheck="false" aria-label="Text poptávky" rows="14" style="display:block;width:100%;max-width:none;box-sizing:border-box;min-height:290px;margin:10px 0 0;padding:12px 14px;resize:none;overflow:hidden;font-family:var(--f-body),'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.55;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;white-space:pre-wrap"></textarea>
+        <div class="row"><button type="button" id="mailcopy">Kopírovat</button><button type="button" id="mailopen">Otevřít v e-mailu</button><small id="mailcopied" hidden>Zkopírováno</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lower">
+    <div class="card">
+      <h2>Stohy (odspodu nahoru)</h2>
+      <div class="scroll"><table id="stacks"></table></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Typy palet</h2>
+    <div class="legend" id="legend"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const DOPRAVA = {"city": {}, "dep": {}, "psc": {}};
+const TARIFY = {"GAHR": {"zdroj": "", "pasma": []}, "MOSS": {"zdroj": "", "mesta": {}}};
+function normCity(x){ return String(x||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/\bcedex\b.*$/,"").replace(/\(.*?\)/g,"").replace(/[-'’\/.,]/g," ").replace(/\bst\b/g,"saint").replace(/\bste\b/g,"sainte").replace(/\d+/g,"").replace(/\s+/g," ").trim(); }
+function sizeClass(D,full){ if(full||D.lp>=12.5) return "FT"; if(D.pallets<=3 && D.lp<=2.7+1e-9) return D.pallets+" PAL"; const lims=[[3.0,"2,7m"],[4.3,"3,5m"],[6.0,"5,4m"],[8.6,"8,1m"],[11.5,"10,8m"]]; for(const [l,c] of lims) if(D.lp<=l+1e-9) return c; return "FT"; }
+function findDest(txt){
+  const psc=(String(txt).match(/\d{4,5}/)||[""])[0]; const key=normCity(txt);
+  let e=null, how="";
+  if(key && DOPRAVA.city[key]){ e=DOPRAVA.city[key]; how="mesto"; }
+  if(!e && key){ const ks=Object.keys(DOPRAVA.city).filter(k=>k.startsWith(key+" ")||key.startsWith(k+" ")); if(ks.length){ e=DOPRAVA.city[ks.sort((a,b)=>DOPRAVA.city[b].n-DOPRAVA.city[a].n)[0]]; how="mesto"; } }
+  if(!e && psc && DOPRAVA.psc[psc]){ const ks=DOPRAVA.psc[psc]; e=DOPRAVA.city[ks.sort((a,b)=>DOPRAVA.city[b].n-DOPRAVA.city[a].n)[0]]; how="mesto"; }
+  const cc = psc.length===4 ? "BE" : (psc.length===5 ? "FR" : (e?e.cc:""));
+  const dep = cc==="BE" ? "BE"+psc.slice(0,2) : (psc ? psc.slice(0,2) : (e&&e.cc==="FR"? e.psc.slice(0,2) : ""));
+  let d=null; if(dep && DOPRAVA.dep[dep]) d=DOPRAVA.dep[dep];
+  if(!e && d){ e=d; how="dep"; }
+  return {e,how,key,psc,dep,cc};
+}
+const ALL = [{"lines": [{"no": "115.1525.11", "item": "LK PVC 150/2500/VERTEX/pot.VERTEX/250m/6750m", "qty": "47 250 M", "share": 7, "l": 2.65, "h": 1.39, "brutto": 4920.8, "idx": 1, "assign": [{"id": 9, "t": "A", "whole": true, "stack": 3}, {"id": 10, "t": "A", "whole": true, "stack": 3}, {"id": 11, "t": "A", "whole": true, "stack": 4}, {"id": 12, "t": "A", "whole": true, "stack": 4}, {"id": 13, "t": "A", "whole": true, "stack": 5}, {"id": 14, "t": "A", "whole": true, "stack": 5}, {"id": 15, "t": "A", "whole": true, "stack": 6}]}, {"no": "141.25", "item": "LTU 2500/VERTEX/50ks/125m/2500m", "qty": "7 500 M", "share": 3, "l": 2.65, "h": 1.07, "brutto": 856.31, "idx": 2, "assign": [{"id": 18, "t": "B", "whole": true, "stack": 7}, {"id": 20, "t": "B", "whole": true, "stack": 8}, {"id": 21, "t": "B", "whole": true, "stack": 8}]}, {"no": "143.25.VT.01", "item": "LTDU 2500/VERTEX/pot.VERTEX/25ks/62,5m/2000m s přesahem tkaniny", "qty": "12 000 M", "share": 6, "l": 2.6, "h": 1.1, "brutto": 1781.64, "idx": 3, "assign": [{"id": 25, "t": "C", "whole": true, "stack": 10}, {"id": 26, "t": "C", "whole": true, "stack": 10}, {"id": 27, "t": "C", "whole": true, "stack": 11}, {"id": 28, "t": "C", "whole": true, "stack": 11}, {"id": 29, "t": "C", "whole": true, "stack": 12}, {"id": 30, "t": "C", "whole": true, "stack": 12}]}, {"no": "285.65.02", "item": "Zátka EPS 65/15/bílá/hladká", "qty": "62 400 KS", "share": 3, "l": 1.2, "h": 2.2, "brutto": 255.84, "volno": true, "idx": 4, "assign": []}, {"no": "204.14510.LT", "item": "LIFITEX PRO 145 100/50/pot. LIFITEX", "qty": "7 000 M2", "share": 4, "l": 1.2, "h": 1.2, "brutto": 1120.49, "idx": 5, "assign": [{"id": 33, "t": "D", "whole": true, "stack": 14}, {"id": 34, "t": "D", "whole": true, "stack": 14}, {"id": 35, "t": "D", "whole": true, "stack": 15}, {"id": 37, "t": "D", "whole": true, "stack": 16}]}, {"no": "204.16510.LT", "item": "LIFITEX PRO 165 100/50/pot. LIFITEX", "qty": "4 950 M2", "share": 3, "l": 1.2, "h": 1.2, "brutto": 891.35, "idx": 6, "assign": [{"id": 24, "t": "E", "whole": true, "stack": 9}, {"id": 31, "t": "E", "whole": true, "stack": 13}, {"id": 32, "t": "E", "whole": true, "stack": 13}]}, {"no": "530.30050", "item": "Těsnicí šňůra 30/025/175m (navolno)", "qty": "175 M", "share": 0, "l": 0, "h": 0, "brutto": 3.85, "idx": 7, "assign": []}, {"no": "401.282230.01", "item": "G-LP 0,28/22x22/3000/kartony", "qty": "72 000 M", "share": 3, "l": 3.05, "h": 0.7, "brutto": 1819.87, "idx": 8, "assign": [{"id": 1, "t": "F", "whole": true, "stack": 1}, {"id": 2, "t": "F", "whole": true, "stack": 1}, {"id": 3, "t": "F", "whole": true, "stack": 1}]}, {"no": "401.282230", "item": "G-LP 0,28/22x22/3000/vrubovaný/kartony", "qty": "24 000 M", "share": 1, "l": 3.05, "h": 0.7, "brutto": 606.62, "idx": 9, "assign": [{"id": 4, "t": "G", "whole": true, "stack": 1}]}, {"no": "403.282230", "item": "G-LPU 0,28/22x12/3000/200ks/600m/kartony", "qty": "48 000 M", "share": 2, "l": 3.05, "h": 0.77, "brutto": 1155.84, "idx": 10, "assign": [{"id": 5, "t": "H", "whole": true, "stack": 2}, {"id": 6, "t": "H", "whole": true, "stack": 2}]}, {"no": "403.282230.02", "item": "G-LPU 0,28/22x12/3000/200ks/600m/vrubovaný/kartony", "qty": "24 000 M", "share": 1, "l": 3.05, "h": 0.7, "brutto": 577.92, "idx": 11, "assign": [{"id": 7, "t": "I", "whole": true, "stack": 2}]}, {"no": "410.25", "item": "G-LP PVC 2500/50ks/125m/7500m", "qty": "7 500 M", "share": 1, "l": 2.55, "h": 0.95, "brutto": 438.58, "idx": 12, "assign": [{"id": 23, "t": "J", "whole": true, "stack": 9}]}, {"no": "198.02", "item": "LA-R 300/350/200/VERTEX R131/bílá/25ks/900ks armovací tkaninový roh", "qty": "250 KS", "share": 0.28, "l": 1.2, "h": 1.55, "brutto": 15.61, "pal": "EUR1", "idx": 13, "assign": [{"id": 40, "t": "EUR1", "whole": false, "stack": 17}]}, {"no": "304.9010", "item": "Eco-Fix R Ø90/10mm montážní terč PP", "qty": "100 KS", "share": 0.02, "l": 1.2, "h": 1.2, "brutto": 4.39, "pal": "EUR1", "idx": 14, "assign": [{"id": 40, "t": "EUR1", "whole": false, "stack": 17}]}, {"no": "432.090", "item": "LikovTape 48/090 samolepící tkaninová bandáž", "qty": "1 152 KS", "share": 2.4, "l": 1.2, "h": 1.0, "brutto": 374.86, "pal": "EUR1", "idx": 15, "assign": [{"id": 36, "t": "K", "whole": true, "stack": 15}, {"id": 38, "t": "K", "whole": true, "stack": 16}, {"id": 40, "t": "EUR1", "whole": false, "stack": 17}]}, {"no": "281.02", "item": "Spojka soklových lišt 1000", "qty": "200 KS", "share": 0.2, "l": 1.2, "h": 1.0, "brutto": 26.4, "pal": "EUR2", "idx": 16, "assign": [{"id": 39, "t": "EUR2", "whole": true, "stack": 17}]}, {"no": "278.02", "item": "TIT 60/05 držák izolace", "qty": "32 000 KS", "share": 0.8, "l": 1.2, "h": 1.52, "brutto": 177.6, "pal": "EUR2", "idx": 17, "assign": [{"id": 39, "t": "EUR2", "whole": true, "stack": 17}]}, {"no": "419.121225", "item": "G-NSL PVC 125/2500/50ks/125m/8000m lišta ukončovací s lamelou", "qty": "2 500 M", "share": 0.32, "l": 2.55, "h": 0.75, "brutto": 166.75, "pal": "PAL2", "idx": 18, "assign": [{"id": 22, "t": "PAL2", "whole": false, "stack": 8}]}, {"no": "868.0626", "item": "LS2-ADAPT 06/2600/VERTEX/30ks/78m/3120m lišta okenní začišťovací 2D 6mm", "qty": "936 M", "share": 0.3, "l": 2.65, "h": 1.2, "brutto": 118.88, "volno": true, "idx": 19, "assign": []}, {"no": "775.25", "item": "LT-KL 2500/VERTEX/50ks/125m/2500m okenní okapnice oblouková", "qty": "1 875 M", "share": 0.75, "l": 2.55, "h": 1.1, "brutto": 217.83, "pal": "PAL3", "idx": 20, "assign": [{"id": 16, "t": "PAL3", "whole": false, "stack": 6}]}, {"no": "788.25", "item": "G-LPF PVC 23x23/2500/50ks/125m/11000m lišta rohová s prolisem flexi ramena", "qty": "2 500 M", "share": 0.23, "l": 2.65, "h": 0.93, "brutto": 126.18, "pal": "PAL3", "idx": 21, "assign": [{"id": 16, "t": "PAL3", "whole": false, "stack": 6}]}, {"no": "782.0425", "item": "LTHU 04/2500/VERTEX/40ks/100m/2000m lišta s okapnicí", "qty": "1 000 M", "share": 0.5, "l": 2.65, "h": 1.18, "brutto": 126.61, "pal": "PAL4", "idx": 22, "assign": [{"id": 17, "t": "PAL4", "whole": false, "stack": 7}]}, {"no": "789.25", "item": "G-KLF PVC 23x23/2500/50ks/125m/11000m lišta klenbová s prolisem flexi ramena", "qty": "3 750 M", "share": 0.35, "l": 2.65, "h": 0.93, "brutto": 185.51, "pal": "PAL4", "idx": 23, "assign": [{"id": 17, "t": "PAL4", "whole": false, "stack": 7}]}, {"no": "101.050520", "item": "LO 05/053/2000", "qty": "1 000 M", "share": 0.5, "l": 2.05, "h": 0.98, "brutto": 130.01, "pal": "PAL5", "idx": 24, "assign": [{"id": 19, "t": "PAL5", "whole": false, "stack": 7}]}, {"no": "121.0320", "item": "LC-L 03/2000/VERTEX/25ks/50m/3000m lišta ukončovací omítková 3mm", "qty": "1 000 M", "share": 0.34, "l": 2.05, "h": 0.75, "brutto": 79.81, "pal": "PAL5", "idx": 25, "assign": [{"id": 19, "t": "PAL5", "whole": false, "stack": 7}]}, {"no": "401.352330", "item": "G-LP 0,35/23x23/3000/kartony", "qty": "3 000 M", "share": 0.13, "l": 3.05, "h": 0.81, "brutto": 96.67, "pal": "PAL6", "idx": 26, "assign": [{"id": 8, "t": "PAL6", "whole": false, "stack": 2}]}, {"no": "101.070225", "item": "LO 07/023/2500", "qty": "1 000 M", "share": 0.5, "l": 2.55, "h": 0.9, "brutto": 123.26, "pal": "PAL6", "idx": 27, "assign": [{"id": 8, "t": "PAL6", "whole": false, "stack": 2}]}], "name": "NAKL-262224 · plný kamion", "note": "Zátky 285.65.02 a LS2-ADAPT 868.0626 jedou navolno do volného místa nahoře. Těsnicí šňůra 530.30050 také navolno.", "dest": "27 položek objednávky · 40 palet · zátky a lišty LS2-ADAPT navolno ve volném místě nahoře", "pallets": 40, "brutto": 16399.48, "lp": 13.9, "cols": [3.1, 2.7, 2.7, 2.7, 2.7], "maxh": 2.8, "placed": [{"t": "F", "item": "G-LP 0,28/22x22/3000/kartony", "no": "401.282230.01", "l": 3.05, "h": 0.7, "kg": 606.62, "share": 1, "src": [8], "nostack": false, "x": 0, "y": 0.0, "z": 0, "stack": 1, "col": 1, "lane": 1, "level": 1, "id": 1}, {"t": "F", "item": "G-LP 0,28/22x22/3000/kartony", "no": "401.282230.01", "l": 3.05, "h": 0.7, "kg": 606.62, "share": 1, "src": [8], "nostack": false, "x": 0, "y": 0.0, "z": 0.7, "stack": 1, "col": 1, "lane": 1, "level": 2, "id": 2}, {"t": "F", "item": "G-LP 0,28/22x22/3000/kartony", "no": "401.282230.01", "l": 3.05, "h": 0.7, "kg": 606.62, "share": 1, "src": [8], "nostack": false, "x": 0, "y": 0.0, "z": 1.4, "stack": 1, "col": 1, "lane": 1, "level": 3, "id": 3}, {"t": "G", "item": "G-LP 0,28/22x22/3000/vrubovaný/kartony", "no": "401.282230", "l": 3.05, "h": 0.7, "kg": 606.62, "share": 1, "src": [9], "nostack": false, "x": 0, "y": 0.0, "z": 2.1, "stack": 1, "col": 1, "lane": 1, "level": 4, "id": 4}, {"t": "H", "item": "G-LPU 0,28/22x12/3000/200ks/600m/kartony", "no": "403.282230", "l": 3.05, "h": 0.77, "kg": 577.92, "share": 1, "src": [10], "nostack": false, "x": 0, "y": 0.8, "z": 0, "stack": 2, "col": 1, "lane": 2, "level": 1, "id": 5}, {"t": "H", "item": "G-LPU 0,28/22x12/3000/200ks/600m/kartony", "no": "403.282230", "l": 3.05, "h": 0.77, "kg": 577.92, "share": 1, "src": [10], "nostack": false, "x": 0, "y": 0.8, "z": 0.77, "stack": 2, "col": 1, "lane": 2, "level": 2, "id": 6}, {"t": "I", "item": "G-LPU 0,28/22x12/3000/200ks/600m/vrubovaný/kartony", "no": "403.282230.02", "l": 3.05, "h": 0.7, "kg": 577.92, "share": 1, "src": [11], "nostack": false, "x": 0, "y": 0.8, "z": 1.54, "stack": 2, "col": 1, "lane": 2, "level": 3, "id": 7}, {"t": "PAL6", "item": "PAL6: G-LP 0,35 (0,13) + LO 07 (0,5)", "no": "PAL6", "l": 3.05, "kg": 219.93, "share": 0.63, "src": [26, 27], "parts": [{"no": "401.352330", "item": "G-LP 0,35/23x23/3000/kartony", "share": 0.13, "h": 0.105, "kg": 96.67}, {"no": "101.070225", "item": "LO 07/023/2500", "share": 0.5, "h": 0.45, "kg": 123.26}], "nostack": false, "h": 0.56, "x": 0, "y": 0.8, "z": 2.24, "stack": 2, "col": 1, "lane": 2, "level": 4, "id": 8}, {"t": "A", "item": "LK PVC 150/2500/VERTEX/pot.VERTEX/250m/6750m", "no": "115.1525.11", "l": 2.65, "h": 1.39, "kg": 702.97, "share": 1, "src": [1], "nostack": false, "x": 0, "y": 1.6, "z": 0, "stack": 3, "col": 1, "lane": 3, "level": 1, "id": 9}, {"t": "A", "item": "LK PVC 150/2500/VERTEX/pot.VERTEX/250m/6750m", "no": "115.1525.11", "l": 2.65, "h": 1.39, "kg": 702.97, "share": 1, "src": [1], "nostack": false, "x": 0, "y": 1.6, "z": 1.39, "stack": 3, "col": 1, "lane": 3, "level": 2, "id": 10}, {"t": "A", "item": "LK PVC 150/2500/VERTEX/pot.VERTEX/250m/6750m", "no": "115.1525.11", "l": 2.65, "h": 1.39, "kg": 702.97, "share": 1, "src": [1], "nostack": false, "x": 3.1, "y": 0.0, "z": 0, "stack": 4, "col": 2, "lane": 1, "level": 1, "id": 11}, {"t": "A", "item": "LK PVC 150/2500/VERTEX/pot.VERTEX/250m/6750m", "no": "115.1525.11", "l": 2.65, "h": 1.39, "kg": 702.97, "share": 1, "src": [1], "nostack": false, "x": 3.1, "y": 0.0, "z": 1.39, "stack": 4, "col": 2, "lane": 1, "level": 2, "id": 12}, {"t": "A", "item": "LK PVC 150/2500/VERTEX/pot.VERTEX/250m/6750m", "no": "115.1525.11", "l": 2.65, "h": 1.39, "kg": 702.97, "share": 1, "src": [1], "nostack": false, "x": 3.1, "y": 0.8, "z": 0, "stack": 5, "col": 2, "lane": 2, "level": 1, "id": 13}, {"t": "A", "item": "LK PVC 150/2500/VERTEX/pot.VERTEX/250m/6750m", "no": "115.1525.11", "l": 2.65, "h": 1.39, "kg": 702.97, "share": 1, "src": [1], "nostack": false, "x": 3.1, "y": 0.8, "z": 1.39, "stack": 5, "col": 2, "lane": 2, "level": 2, "id": 14}, {"t": "A", "item": "LK PVC 150/2500/VERTEX/pot.VERTEX/250m/6750m", "no": "115.1525.11", "l": 2.65, "h": 1.39, "kg": 702.97, "share": 1, "src": [1], "nostack": false, "x": 3.1, "y": 1.6, "z": 0, "stack": 6, "col": 2, "lane": 3, "level": 1, "id": 15}, {"t": "PAL3", "item": "PAL3: LT-KL 2500 (0,75) + G-LPF PVC 23x23 (0,23)", "no": "PAL3", "l": 2.65, "kg": 344.01, "share": 0.98, "src": [20, 21], "parts": [{"no": "775.25", "item": "LT-KL 2500/VERTEX/50ks/125m/2500m okenní okapnice oblouková", "share": 0.75, "h": 0.825, "kg": 217.83}, {"no": "788.25", "item": "G-LPF PVC 23x23/2500/50ks/125m/11000m lišta rohová s prolisem flexi ramena", "share": 0.23, "h": 0.214, "kg": 126.18}], "nostack": false, "h": 1.04, "x": 3.1, "y": 1.6, "z": 1.39, "stack": 6, "col": 2, "lane": 3, "level": 2, "id": 16}, {"t": "PAL4", "item": "PAL4: LTHU 04 (0,5) + G-KLF PVC 23x23 (0,35)", "no": "PAL4", "l": 2.65, "kg": 312.12, "share": 0.85, "src": [22, 23], "parts": [{"no": "782.0425", "item": "LTHU 04/2500/VERTEX/40ks/100m/2000m lišta s okapnicí", "share": 0.5, "h": 0.59, "kg": 126.61}, {"no": "789.25", "item": "G-KLF PVC 23x23/2500/50ks/125m/11000m lišta klenbová s prolisem flexi ramena", "share": 0.35, "h": 0.326, "kg": 185.51}], "nostack": false, "h": 0.92, "x": 5.8, "y": 0.0, "z": 0, "stack": 7, "col": 3, "lane": 1, "level": 1, "id": 17}, {"t": "B", "item": "LTU 2500/VERTEX/50ks/125m/2500m", "no": "141.25", "l": 2.65, "h": 1.07, "kg": 285.44, "share": 1, "src": [2], "nostack": false, "x": 5.8, "y": 0.0, "z": 0.92, "stack": 7, "col": 3, "lane": 1, "level": 2, "id": 18}, {"t": "PAL5", "item": "PAL5: LO 05 (0,5) + LC-L 03 (0,34)", "no": "PAL5", "l": 2.05, "kg": 209.82, "share": 0.84, "src": [24, 25], "parts": [{"no": "101.050520", "item": "LO 05/053/2000", "share": 0.5, "h": 0.49, "kg": 130.01}, {"no": "121.0320", "item": "LC-L 03/2000/VERTEX/25ks/50m/3000m lišta ukončovací omítková 3mm", "share": 0.34, "h": 0.255, "kg": 79.81}], "nostack": false, "h": 0.74, "x": 5.8, "y": 0.0, "z": 1.99, "stack": 7, "col": 3, "lane": 1, "level": 3, "id": 19}, {"t": "B", "item": "LTU 2500/VERTEX/50ks/125m/2500m", "no": "141.25", "l": 2.65, "h": 1.07, "kg": 285.44, "share": 1, "src": [2], "nostack": false, "x": 5.8, "y": 0.8, "z": 0, "stack": 8, "col": 3, "lane": 2, "level": 1, "id": 20}, {"t": "B", "item": "LTU 2500/VERTEX/50ks/125m/2500m", "no": "141.25", "l": 2.65, "h": 1.07, "kg": 285.44, "share": 1, "src": [2], "nostack": false, "x": 5.8, "y": 0.8, "z": 1.07, "stack": 8, "col": 3, "lane": 2, "level": 2, "id": 21}, {"t": "PAL2", "item": "PAL2: G-NSL PVC 125 (0,32)", "no": "PAL2", "l": 2.55, "kg": 166.75, "share": 0.32, "src": [18], "parts": [{"no": "419.121225", "item": "G-NSL PVC 125/2500/50ks/125m/8000m lišta ukončovací s lamelou", "share": 0.32, "h": 0.24, "kg": 166.75}], "nostack": false, "h": 0.24, "x": 5.8, "y": 0.8, "z": 2.14, "stack": 8, "col": 3, "lane": 2, "level": 3, "id": 22}, {"t": "J", "item": "G-LP PVC 2500/50ks/125m/7500m", "no": "410.25", "l": 2.55, "h": 0.95, "kg": 438.58, "share": 1, "src": [12], "nostack": false, "x": 5.8, "y": 1.6, "z": 0, "stack": 9, "col": 3, "lane": 3, "level": 1, "id": 23}, {"t": "E", "item": "LIFITEX PRO 165 100/50/pot. LIFITEX", "no": "204.16510.LT", "l": 1.2, "h": 1.2, "kg": 297.12, "share": 1, "src": [6], "nostack": false, "x": 5.8, "y": 1.6, "z": 0.95, "stack": 9, "col": 3, "lane": 3, "level": 2, "id": 24}, {"t": "C", "item": "LTDU 2500/VERTEX/pot.VERTEX/25ks/62,5m/2000m s přesahem tkaniny", "no": "143.25.VT.01", "l": 2.6, "h": 1.1, "kg": 296.94, "share": 1, "src": [3], "nostack": false, "x": 8.5, "y": 0.0, "z": 0, "stack": 10, "col": 4, "lane": 1, "level": 1, "id": 25}, {"t": "C", "item": "LTDU 2500/VERTEX/pot.VERTEX/25ks/62,5m/2000m s přesahem tkaniny", "no": "143.25.VT.01", "l": 2.6, "h": 1.1, "kg": 296.94, "share": 1, "src": [3], "nostack": false, "x": 8.5, "y": 0.0, "z": 1.1, "stack": 10, "col": 4, "lane": 1, "level": 2, "id": 26}, {"t": "C", "item": "LTDU 2500/VERTEX/pot.VERTEX/25ks/62,5m/2000m s přesahem tkaniny", "no": "143.25.VT.01", "l": 2.6, "h": 1.1, "kg": 296.94, "share": 1, "src": [3], "nostack": false, "x": 8.5, "y": 0.8, "z": 0, "stack": 11, "col": 4, "lane": 2, "level": 1, "id": 27}, {"t": "C", "item": "LTDU 2500/VERTEX/pot.VERTEX/25ks/62,5m/2000m s přesahem tkaniny", "no": "143.25.VT.01", "l": 2.6, "h": 1.1, "kg": 296.94, "share": 1, "src": [3], "nostack": false, "x": 8.5, "y": 0.8, "z": 1.1, "stack": 11, "col": 4, "lane": 2, "level": 2, "id": 28}, {"t": "C", "item": "LTDU 2500/VERTEX/pot.VERTEX/25ks/62,5m/2000m s přesahem tkaniny", "no": "143.25.VT.01", "l": 2.6, "h": 1.1, "kg": 296.94, "share": 1, "src": [3], "nostack": false, "x": 8.5, "y": 1.6, "z": 0, "stack": 12, "col": 4, "lane": 3, "level": 1, "id": 29}, {"t": "C", "item": "LTDU 2500/VERTEX/pot.VERTEX/25ks/62,5m/2000m s přesahem tkaniny", "no": "143.25.VT.01", "l": 2.6, "h": 1.1, "kg": 296.94, "share": 1, "src": [3], "nostack": false, "x": 8.5, "y": 1.6, "z": 1.1, "stack": 12, "col": 4, "lane": 3, "level": 2, "id": 30}, {"t": "E", "item": "LIFITEX PRO 165 100/50/pot. LIFITEX", "no": "204.16510.LT", "l": 1.2, "h": 1.2, "kg": 297.12, "share": 1, "src": [6], "nostack": false, "x": 11.2, "y": 0.0, "z": 0, "stack": 13, "col": 5, "lane": 1, "level": 1, "id": 31}, {"t": "E", "item": "LIFITEX PRO 165 100/50/pot. LIFITEX", "no": "204.16510.LT", "l": 1.2, "h": 1.2, "kg": 297.12, "share": 1, "src": [6], "nostack": false, "x": 11.2, "y": 0.0, "z": 1.2, "stack": 13, "col": 5, "lane": 1, "level": 2, "id": 32}, {"t": "D", "item": "LIFITEX PRO 145 100/50/pot. LIFITEX", "no": "204.14510.LT", "l": 1.2, "h": 1.2, "kg": 280.12, "share": 1, "src": [5], "nostack": false, "x": 12.45, "y": 0.0, "z": 0, "stack": 14, "col": 5, "lane": 1, "level": 1, "id": 33}, {"t": "D", "item": "LIFITEX PRO 145 100/50/pot. LIFITEX", "no": "204.14510.LT", "l": 1.2, "h": 1.2, "kg": 280.12, "share": 1, "src": [5], "nostack": false, "x": 12.45, "y": 0.0, "z": 1.2, "stack": 14, "col": 5, "lane": 1, "level": 2, "id": 34}, {"t": "D", "item": "LIFITEX PRO 145 100/50/pot. LIFITEX", "no": "204.14510.LT", "l": 1.2, "h": 1.2, "kg": 280.12, "share": 1, "src": [5], "nostack": false, "x": 11.2, "y": 0.8, "z": 0, "stack": 15, "col": 5, "lane": 2, "level": 1, "id": 35}, {"t": "K", "item": "LikovTape 48/090 samolepící tkaninová bandáž", "no": "432.090", "l": 1.2, "h": 1.0, "kg": 156.19, "share": 1, "src": [15], "nostack": false, "x": 11.2, "y": 0.8, "z": 1.2, "stack": 15, "col": 5, "lane": 2, "level": 2, "id": 36}, {"t": "D", "item": "LIFITEX PRO 145 100/50/pot. LIFITEX", "no": "204.14510.LT", "l": 1.2, "h": 1.2, "kg": 280.12, "share": 1, "src": [5], "nostack": false, "x": 12.45, "y": 0.8, "z": 0, "stack": 16, "col": 5, "lane": 2, "level": 1, "id": 37}, {"t": "K", "item": "LikovTape 48/090 samolepící tkaninová bandáž", "no": "432.090", "l": 1.2, "h": 1.0, "kg": 156.19, "share": 1, "src": [15], "nostack": false, "x": 12.45, "y": 0.8, "z": 1.2, "stack": 16, "col": 5, "lane": 2, "level": 2, "id": 38}, {"t": "EUR2", "item": "EUR2: Spojka soklových lišt 1000 (0,2) + TIT 60 (0,8)", "no": "EUR2", "l": 1.2, "kg": 204.0, "share": 1.0, "src": [16, 17], "parts": [{"no": "281.02", "item": "Spojka soklových lišt 1000", "share": 0.2, "h": 0.2, "kg": 26.4}, {"no": "278.02", "item": "TIT 60/05 držák izolace", "share": 0.8, "h": 1.216, "kg": 177.6}], "nostack": false, "h": 1.42, "x": 11.2, "y": 1.6, "z": 0, "stack": 17, "col": 5, "lane": 3, "level": 1, "id": 39}, {"t": "EUR1", "item": "EUR1: LA-R 300 (0,28) + Eco-Fix R Ø90 (0,02) + LikovTape 48 (0,4)", "no": "EUR1", "l": 1.2, "kg": 82.48, "share": 0.7, "src": [13, 14, 15], "parts": [{"no": "198.02", "item": "LA-R 300/350/200/VERTEX R131/bílá/25ks/900ks armovací tkaninový roh", "share": 0.28, "h": 0.434, "kg": 15.61}, {"no": "304.9010", "item": "Eco-Fix R Ø90/10mm montážní terč PP", "share": 0.02, "h": 0.024, "kg": 4.39}, {"no": "432.090", "item": "LikovTape 48/090 samolepící tkaninová bandáž", "share": 0.4, "h": 0.4, "kg": 62.48}], "nostack": false, "h": 0.86, "x": 11.2, "y": 1.6, "z": 1.42, "stack": 17, "col": 5, "lane": 3, "level": 2, "id": 40}], "types": {}, "loose": [{"no": "285.65.02", "item": "Zátka EPS 65/15/bílá/hladká", "share": 3, "vol": 6.34, "kg": 255.84}, {"no": "868.0626", "item": "LS2-ADAPT 06/2600/VERTEX/30ks/78m/3120m lišta okenní začišťovací 2D 6mm", "share": 0.3, "vol": 0.76, "kg": 118.88}], "free_top": 9.44, "real_len": 13.4, "unload": "", "load_date": ""}];
+let LOOP=0;
+const TRUCK0 = {L:13.62, W:2.48, H:2.71};
+let TRUCK = {...TRUCK0};
+const OFFY = (TRUCK0.W - 2.4)/2;
+const PAL=["#e5484d","#f2c94c","#2bb3a3","#5b7cf0","#f08c4b","#b5d33d","#58c4e8","#c084fc","#f472b6","#94a3b8","#a3e635","#fb7185"];
+let TYPEIDX={};
+const col = t => PAL[(TYPEIDX[t]??0)%PAL.length];
+const fmt = (n,d=0) => n.toLocaleString("cs-CZ",{minimumFractionDigits:d,maximumFractionDigits:d});
+const cm = m => Math.round(m*100);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function legend_reset(){document.getElementById("legend").innerHTML="";}
+function render(D){
+TRUCK = {...TRUCK0, L:Math.max(TRUCK0.L, D.lp)};
+// ---------- header ----------
+document.getElementById("title").textContent = D.name;
+document.getElementById("dest").textContent = D.dest;
+const nt=document.getElementById("note"); nt.hidden=!D.note; nt.textContent=D.note||"";
+const wb=document.getElementById("warn"); const real=D.real_len??D.lp; const full=D.lp>13.6+1e-9 && real<=13.7; const over=D.lp>13.6+1e-9 && !full; wb.hidden=!(over||full); wb.classList.toggle("ok",full);
+if(over) wb.textContent=`Nevejde se do jednoho kamionu 13,6 m: ložná plocha vychází ${fmt(D.lp,1)} m, tj. o ${fmt(D.lp-13.6,1)} m víc. Kamion je v plánku prodloužený jen pro názornost – rozdělit na 2 auta / část dohodnout zvlášť.`;
+if(full) wb.textContent=`Plný kamion na doraz: palety za sebou měří ${fmt(real,2)} m (první sloupec má palety 3,05 m). Podle pravidla 2,7 m na místo by to bylo ${fmt(D.lp,1)} m, ale reálně se vejdou.`;
+const ld=document.getElementById("loose"); const L=D.loose||[]; ld.hidden=!L.length;
+if(L.length){const need=L.reduce((a,x)=>a+x.vol,0); const okv=need<=D.free_top;
+  ld.innerHTML=`<b>Navolno (vyházení):</b> ${L.map(x=>`${x.no} ${x.item.split("/")[0]} – ${fmt(x.vol,1)} m³, ${fmt(Math.round(x.kg))} kg`).join(" · ")}<br>Potřeba ${fmt(need,1)} m³, volné místo nahoře na stozích (do ${fmt(D.maxh,2)} m) ${fmt(D.free_top,1)} m³ → ${okv?`<b>vejde se</b>, zbývá ${fmt(D.free_top-need,1)} m³`:`<b>nevejde se</b>, chybí ${fmt(need-D.free_top,1)} m³`}.`;}
+TYPEIDX={}; [...new Set(D.placed.map(p=>p.t))].sort().forEach((t,i)=>TYPEIDX[t]=i);
+legend_reset();
+const kp = [[D.pallets,"palet"],[fmt(Math.round(D.brutto))+" kg","brutto"],[fmt(D.lp,1)+" m","ložná plocha"],[new Set(D.placed.map(p=>p.stack)).size,"stohů"]];
+document.getElementById("kpis").innerHTML = kp.map(([v,l])=>`<div class="kpi"><b>${v}</b><span>${l}</span></div>`).join("");
+const ctext = full ? `FULL TRUCK 13,6m LP (${D.pallets} PAL${L.length?" + navolno":""}), ${fmt(Math.round(D.brutto))} kg` : `${fmt(D.lp,1)}m LP (${D.pallets} PAL${L.length?" + navolno":""}), ${fmt(Math.round(D.brutto))} kg`;
+document.getElementById("ctext").textContent = ctext;
+// ---------- poptávka pro dopravce (od 3 palet) ----------
+const mc=document.getElementById("mailcard"); mc.hidden=D.pallets<3; document.getElementById("carcard").hidden=true;
+if(D.pallets>=3){
+  const lpTxt = full ? `FULL TRUCK 13,6m LP (${D.pallets} PAL)` : `${fmt(D.lp,1)}m LP (${D.pallets} PAL${L.length?" + navolno":""})`;
+  const DNY=["neděle","pondělí","úterý","středa","čtvrtek","pátek","sobota"];
+  const fd=document.getElementById("maildate"), fc=document.getElementById("mailcity"), ta=document.getElementById("mailtext");
+  // předvyplnit z nakládky, jinak nechat prázdné
+  const m=(D.load_date||"").match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})?/);
+  fd.value = m ? `${m[3]||"2026"}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}` : "";
+  fc.value = D.unload || "";
+  const dateTxt=()=>{ if(!fd.value) return ""; const [y,mo,d]=fd.value.split("-").map(Number); const dt=new Date(y,mo-1,d); return `${d}.${mo}.${y} (${DNY[dt.getDay()]})`; };
+  const cityTxt=()=>fc.value.trim().toUpperCase();
+  const lineN=()=>`nakládka: ${dateTxt()} / Likov, Blanenská č.p. 1859, 66434 Kuřim`;
+  const lineV=()=>`vykládka: co nejdříve dle možností / ${cityTxt()}`;
+  {
+  const grp={}; D.placed.forEach(p=>{const k=cm(p.l); (grp[k] ||= {n:0,lo:1e9,hi:0}); const g=grp[k]; g.n++; g.lo=Math.min(g.lo,cm(p.h)); g.hi=Math.max(g.hi,cm(p.h));});
+  const rozpis=Object.entries(grp).sort((x,y)=>y[0]-x[0]).map(([k,g])=>`  ${g.n}× ${k} × 80 cm, výška ${g.lo===g.hi?g.lo:g.lo+"–"+g.hi} cm`).join("\n");
+  const st={}; D.placed.forEach(p=>{st[p.stack]=(st[p.stack]||0)+p.h;}); const maxSt=Math.max(...Object.values(st));
+  const maxL=Math.max(...D.placed.map(p=>p.l));
+  const volno=L.length?`\nnavolno (vyházené, ložené nahoře na paletách): ${L.map(x=>`${x.item.split("/")[0]} ${fmt(x.vol,1)} m³ / ${fmt(Math.round(x.kg))} kg`).join("; ")}`:"";
+  ta.value = `Dobrý den,\nposílám poptávku na přepravu:\n\n${lineN()}\n${lineV()}\nzboží: stavební profily a příslušenství ETICS (bezpečné zboží, není ADR)\nrozměry/počet palet: ${lpTxt}\nhmotnost brutto: ${fmt(Math.round(D.brutto))} kg\nložná plocha: ${fmt(real,1)} m${full?" (plný kamion)":""}\n\nrozpis palet:\n${rozpis}${volno}\n\nnejdelší paleta: ${fmt(maxL,2)} m, nejvyšší stoh: ${fmt(maxSt,2)} m – prosím o návěs s vnitřní výškou min. ${fmt(Math.ceil(maxSt*10-1e-6)/10,1)} m\npalety jsou ve ${new Set(D.placed.map(p=>p.stack)).size} stozích, plánek nakládky můžeme poslat\n\nMáte možnost?\nJaká by byla cena? A přibližné datum vykládky, prosím?\n\nDěkuji Vám!`;
+};
+  const fit=()=>{ta.style.height="auto"; ta.style.height=(ta.scrollHeight+2)+"px";};
+  const mark=()=>{fd.classList.toggle("empty",!fd.value); fc.classList.toggle("empty",!cityTxt());};
+  // změna políčka přepíše jen svůj řádek, ostatní ruční úpravy v textu zůstanou
+  const cls=sizeClass(D,full);
+  const kc=n=>n==null?"–":fmt(n)+" Kč";
+  const renderCar=()=>{
+    const cb=document.getElementById("carbody"), t=fc.value.trim();
+    if(!t){ cb.innerHTML=`<p class="muted" style="margin:10px 0 0">Napiš město + PSČ vykládky do políčka v poptávce níže a ukážu, kdo tam jezdí nejčastěji a za kolik.</p>`; return; }
+    const r=findDest(t), e=r.e;
+    // ceníky
+    const tar=[]; const key=r.key;
+    const mo=TARIFY.MOSS.mesta[key]; if(mo && mo[2][cls]!=null) tar.push(["MOSS",mo[2][cls],`${TARIFY.MOSS.zdroj} – ${mo[0]}`]);
+    if(!mo && r.cc!=="BE"){ const near=Object.values(TARIFY.MOSS.mesta).filter(m=>m[1]===r.dep && m[2][cls]!=null); if(near.length) tar.push(["MOSS",near[0][2][cls],`${TARIFY.MOSS.zdroj} – ${near[0][0]} (stejný departement, orientačně)`]); }
+    if(r.cc!=="BE"){ const ga=TARIFY.GAHR.pasma.find(z=>z.dep.includes(r.dep)); if(ga){ const c=ga.ceny[cls]; tar.push(["GAHR",c??null,`${TARIFY.GAHR.zdroj} – ${ga.nazev}${c==null?" (pro "+cls+" cena v ceníku není)":""}`]); } }
+    if(!e){ cb.innerHTML=`<p style="margin:10px 0 0">Do <b>${t.toUpperCase()}</b> v archivu žádná doprava není${r.dep?` (ani do departementu ${r.dep.replace("BE","BE ")})`:""}.</p>`+(tar.length?`<div class="price">${tar.map(x=>`<div><span>${x[0]} · <span class="muted">${x[2]}</span></span><b>${kc(x[1])}</b></div>`).join("")}</div>`:""); return; }
+    const pd=x=>{const [d,m,y]=x.split(".").map(Number); return new Date(y,m-1,d);};
+    const lim=new Date(); lim.setMonth(lim.getMonth()-24);
+    const all=Object.entries(e.c).sort((a,b)=>b[1][0]-a[1][0]);
+    const act=all.filter(([c,v])=>pd(v[1])>=lim);
+    const cars = act.length ? [act[0], ...all.filter(x=>x[0]!==act[0][0])] : all;
+    const [best,bv]=cars[0]; const bp=bv[2][cls];
+    const skipped = act.length ? all.filter(([c,v])=>v[0]>bv[0]).map(([c])=>c) : [];
+    const where = r.how==="mesto" ? `do <b>${e.names}</b> (${e.psc})` : `do departementu <b>${r.dep.replace("BE","BE ")}</b> (město samo v archivu není)`;
+    let h=`<div class="top"><span class="muted">Nejčastěji ${where}:</span><b class="big">${best}</b><span class="num">${bv[0]}× v historii · naposledy ${bv[1]}</span>${skipped.length?`<span class="muted" style="font-size:12px">Víc jízd měl ${skipped.join(", ")}, ale tam už přes 2 roky nejel.</span>`:""}</div>`;
+    h+=`<div class="price">`;
+    tar.filter(x=>x[0]===best).forEach(x=>h+=`<div><span>Ceník · <span class="muted">${x[2]}</span></span><b>${kc(x[1])}</b></div>`);
+    h+= bp ? `<div><span>Poslední cena ${best} pro ${cls} <span class="muted">(${bp[1]})</span></span><b>${kc(bp[0])}</b></div><div><span>Obvykle <span class="muted">(medián z ${bp[3]} jízd od 2024)</span></span><b>${kc(bp[2])}</b></div>`
+            : `<div><span class="muted">${best}: pro ${cls} v archivu od 2024 cena není</span><b></b></div>`;
+    tar.filter(x=>x[0]!==best).forEach(x=>h+=`<div><span>${x[0]} · <span class="muted">${x[2]}</span></span><b>${kc(x[1])}</b></div>`);
+    h+=`</div>`;
+    if(cars.length>1){ h+=`<table><tr><th>Další dopravci</th><th class="r">Jízd</th><th class="r">Poslední cena</th></tr>`+cars.slice(1,5).map(([c,v])=>{const p=v[2][cls];return `<tr><td>${c}<div class="muted" style="font-size:12px">naposledy ${v[1]}</div></td><td class="r num">${v[0]}</td><td class="r num">${p?kc(p[0])+`<div class="muted" style="font-size:12px">${p[1]}</div>`:"–"}</td></tr>`}).join("")+`</table>`; }
+    h+=`<div class="src">Velikost zásilky: ${cls}. Archiv objednávek doprav 2015–2026, ceny bez DPH; u objednávek s více vykládkami se cena nepočítá.</div>`;
+    cb.innerHTML=h;
+  };
+  
+  const upd=()=>{ ta.value=ta.value.replace(/^nakládka:.*$/m,lineN()).replace(/^vykládka:.*$/m,lineV()); mark(); fit(); renderCar(); };
+  fd.oninput=upd; fd.onchange=upd; fc.oninput=upd;
+  mark(); fit(); renderCar(); requestAnimationFrame(fit); ta.oninput=fit; new ResizeObserver(fit).observe(ta.parentElement);
+  document.getElementById("mailcopy").onclick=()=>{const done=()=>{const s=document.getElementById("mailcopied");s.hidden=false;setTimeout(()=>s.hidden=true,1500)};
+    navigator.clipboard.writeText(ta.value).then(done).catch(()=>{ta.focus();ta.select();try{document.execCommand("copy");done();}catch(e){}});};
+  document.getElementById("mailopen").onclick=()=>{const c=cityTxt(); location.href=`mailto:?subject=${encodeURIComponent("Poptávka dopravy"+(c?" - "+c:""))}&body=${encodeURIComponent(ta.value)}`;};
+}
+document.getElementById("copy").onclick=(()=>{
+  const done=()=>{const s=document.getElementById("copied");s.hidden=false;setTimeout(()=>s.hidden=true,1500)};
+  navigator.clipboard.writeText(ctext).then(done).catch(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("ctext"));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);});
+});
+
+// ---------- type summary ----------
+const types = {};
+D.placed.forEach(p=>{ (types[p.t] ||= {t:p.t,item:p.item,no:p.no,l:p.l,h:p.h,kg:p.kg,n:0,mixed:false}); const T=types[p.t]; T.n++; if(Math.abs(T.h-p.h)>1e-6) T.mixed=true; });
+const legend = document.getElementById("legend");
+let activeType = null;
+Object.values(types).sort((a,b)=>a.t.localeCompare(b.t)).forEach(T=>{
+  const b=document.createElement("button"); b.type="button";
+  b.innerHTML=`<span class="sw" style="background:${col(T.t)}">${T.t}</span><span>${T.item}<small class="num">${T.no} · ${cm(T.l)} × 80 × ${cm(T.h)} cm · ${fmt(T.kg)} kg/pal</small></span><b class="num">${T.n}×</b>`;
+  b.addEventListener("click",()=>{activeType = activeType===T.t?null:T.t; legend.querySelectorAll("button").forEach(x=>x.classList.remove("on")); if(activeType) b.classList.add("on"); select(null); highlight();});
+  legend.appendChild(b);
+});
+
+// ---------- lines table ----------
+const linesEl=document.getElementById("lines");
+const chip=(a)=>`<span class="chip" style="background:${col(a.t)}">${a.whole?"celá "+a.t:a.t} #${a.id}</span>`;
+linesEl.innerHTML=`<tr><th>#</th><th>Číslo · úplný popis</th><th class="r">Množství</th><th class="r">Počet palet</th><th>Paleta</th></tr>`+
+  D.lines.map((l,i)=>l.note?`<tr><td class="muted">${l.idx}</td><td class="muted" colspan="4">${l.no} – poznámka, nic se nenakládá</td></tr>`:
+  `<tr class="ln" data-i="${i}"><td class="muted">${l.idx}</td><td><div class="no">${l.no}</div><div class="desc">${l.item}</div></td><td class="r num">${l.qty||""}</td><td class="r num"><b>${fmt(l.share,l.share%1?2:0)}</b></td><td>${l.assign.length?l.assign.map(chip).join(" "):'<span class="muted">navolno</span>'}</td></tr>`).join("");
+linesEl.querySelectorAll("tr.ln").forEach(tr=>tr.onclick=()=>{const l=D.lines[+tr.dataset.i]; linesEl.querySelectorAll("tr").forEach(x=>x.classList.toggle("sel",x===tr)); selectIds(l.assign.map(a=>a.id));});
+const comp=D.placed.filter(p=>p.parts);
+document.getElementById("composed").innerHTML=comp.length?`<div class="muted" style="font-weight:600">Seskládané palety</div>`+comp.map(p=>`<div><span class="chip" style="background:${col(p.t)}">${p.t} #${p.id}</span> součet <b class="num">${fmt(p.share,2)}</b> · výška <b class="num">${cm(p.h)} cm</b> · brutto <b class="num">${fmt(Math.round(p.kg))} kg</b> · ${cm(p.l)} × 80 cm<div class="muted">${p.parts.map(x=>`${x.no} (${fmt(x.share,2)})`).join(" + ")}</div></div>`).join(""):"";
+
+// ---------- stacks table ----------
+const stacks = {};
+D.placed.forEach(p=>{(stacks[p.stack] ||= []).push(p)});
+const circ = n => "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳"[n-1] || n;
+document.getElementById("stacks").innerHTML = `<tr><th>Stoh</th><th>Místo</th><th>Odspodu nahoru</th><th class="r">Výška</th><th class="r">kg</th></tr>` +
+  Object.entries(stacks).map(([s,ps])=>{const h=ps.reduce((a,p)=>a+p.h,0), kg=ps.reduce((a,p)=>a+p.kg,0);
+   return `<tr><td>${circ(+s)}</td><td class="num">sloupec ${ps[0].col}, pruh ${ps[0].lane}</td><td>${ps.map(p=>`<span class="chip" style="background:${col(p.t)}">${p.t}</span>`).join(" ")}</td><td class="r num">${fmt(h,2)} m</td><td class="r num">${fmt(Math.round(kg))}</td></tr>`}).join("");
+
+// ---------- 2D plan ----------
+(function plan(){
+  const S=70, pad=26, used=D.lp, len=Math.max(used+0.6,6), W=len*S+pad*2, Hh=2.4*S+pad*2+18;
+  const svg=document.getElementById("plan"); svg.setAttribute("viewBox",`0 0 ${W} ${Hh}`); svg.setAttribute("width",W); svg.setAttribute("height",Hh);
+  let h=`<rect x="${pad}" y="${pad}" width="${len*S}" height="${2.4*S}" fill="var(--floor)" stroke="var(--wall)"/>`;
+  if(used>13.6) h+=`<line x1="${pad+13.6*S}" y1="${pad-4}" x2="${pad+13.6*S}" y2="${pad+2.4*S+4}" stroke="var(--warn)" stroke-width="3"/><text x="${pad+13.6*S+4}" y="${pad-8}" font-size="12" fill="var(--warn)">konec 13,6 m</text>`;
+  h+=`<text x="${pad}" y="${pad-8}" font-size="12" fill="var(--muted)">KABINA ←</text><text x="${pad+len*S}" y="${pad-8}" font-size="12" text-anchor="end" fill="var(--muted)">→ DVEŘE</text>`;
+  let x=0; D.cols.forEach((c,i)=>{ h+=`<line x1="${pad+(x+c)*S}" y1="${pad}" x2="${pad+(x+c)*S}" y2="${pad+2.4*S}" stroke="var(--accent)" stroke-dasharray="4 3"/>`;
+    h+=`<text x="${pad+(x+c/2)*S}" y="${pad+2.4*S+16}" font-size="13" text-anchor="middle" fill="var(--ink)">sloupec ${i+1}: ${fmt(c,1)} m</text>`; x+=c;});
+  Object.entries(stacks).forEach(([s,ps])=>{const b=ps[0]; const hgt=ps.reduce((a,p)=>a+p.h,0);
+    h+=`<rect x="${pad+b.x*S+2}" y="${pad+b.y*S+3}" width="${b.l*S-4}" height="${0.8*S-6}" rx="3" fill="${col(b.t)}" fill-opacity=".85" stroke="#14181c" stroke-opacity=".35"/>`;
+    h+=`<text x="${pad+b.x*S+8}" y="${pad+b.y*S+24}" font-size="16" font-weight="700" fill="#14181c">${circ(+s)} ${ps.map(p=>p.t).join("+")}</text>`;
+    h+=`<text x="${pad+b.x*S+8}" y="${pad+b.y*S+44}" font-size="13" fill="#14181c">v ${fmt(hgt,2)} m · ${fmt(Math.round(ps.reduce((a,p)=>a+p.kg,0)))} kg</text>`;});
+  svg.innerHTML=h;
+})();
+
+// ---------- detail ----------
+const detail=document.getElementById("detail");
+function showDetail(p){
+  if(!p){detail.innerHTML=`<h2>Detail palety</h2><p class="muted">Klikni na paletu v kamionu nebo na typ v legendě.</p>
+    <dl class="num"><dt>Palet</dt><dd>${D.pallets}</dd><dt>Brutto celkem</dt><dd>${fmt(Math.round(D.brutto))} kg</dd><dt>Ložná plocha</dt><dd>${D.cols.map(c=>fmt(c,1)).join(" + ")} = ${fmt(D.lp,1)} m</dd><dt>Max. výška stohu</dt><dd>${fmt(D.maxh,2)} m</dd></dl>`;return;}
+  const st=stacks[p.stack]; const below=st.filter(q=>q.level<p.level).map(q=>q.t).join("+")||"podlaha"; const above=st.filter(q=>q.level>p.level).map(q=>q.t).join("+")||"nic";
+  detail.innerHTML=`<h2>Detail palety</h2><div class="big"><span class="sw" style="background:${col(p.t)}">${p.t}</span>Paleta č. ${p.id}</div>
+  <dl class="num"><dt>Zboží</dt><dd>${p.item}</dd><dt>Číslo</dt><dd>${p.no}</dd>
+  <dt>Rozměr</dt><dd>${cm(p.l)} × 80 × ${cm(p.h)} cm</dd><dt>Brutto</dt><dd>${fmt(Math.round(p.kg))} kg</dd>
+  <dt>Podíl palety</dt><dd>${p.share===1?"celá paleta":fmt(p.share,2)+" (seskládaná)"}</dd>${p.parts?`<dt>Obsah</dt><dd>${p.parts.map(x=>`${x.no} · ${fmt(x.share,2)} · ${cm(x.h)} cm · ${fmt(Math.round(x.kg))} kg`).join("<br>")}</dd>`:""}
+  <dt>Pozice</dt><dd>stoh ${circ(p.stack)} · sloupec ${p.col}, pruh ${p.lane} · ${p.level}. patro</dd>
+  <dt>Pod ní</dt><dd>${below}</dd><dt>Na ní</dt><dd>${above}</dd>
+  <dt>Výška od podlahy</dt><dd>${cm(p.z)}–${cm(p.z+p.h)} cm</dd></dl>`;
+}
+showDetail(null);
+
+// ---------- 3D ----------
+const host=document.getElementById("scene"); host.innerHTML="";
+let renderer, scene, camera, controls, meshes=[], selected=null, selIds=new Set();
+function select(p){selected=p; selIds=new Set(p?[p.id]:[]); if(!p) linesEl.querySelectorAll("tr").forEach(x=>x.classList.remove("sel")); showDetail(p); highlight();}
+function selectIds(ids){selIds=new Set(ids); selected=D.placed.find(p=>p.id===ids[0])||null; showDetail(selected); highlight();}
+function highlight(){meshes.forEach(m=>{const p=m.userData.p; const dim=(activeType&&p.t!==activeType)||(selIds.size&&!selIds.has(p.id));
+  m.material.forEach(mt=>{mt.opacity=dim?0.18:1; mt.transparent=dim; mt.emissive&&mt.emissive.setHex(selIds.has(p.id)?0x333333:0x000000)}); m.userData.edge.material.opacity=dim?.15:.7;});}
+function labelTex(p, w, h){
+  const c=document.createElement("canvas"); const k=128; c.width=Math.max(64,Math.round(w*k)); c.height=Math.max(32,Math.round(h*k));
+  const g=c.getContext("2d"); g.fillStyle=col(p.t); g.fillRect(0,0,c.width,c.height);
+  g.fillStyle="rgba(20,24,28,.88)"; const fs=Math.min(c.height*0.62, c.width*0.3); g.font=`700 ${fs}px Barlow Semi Condensed, Arial`; g.textAlign="center"; g.textBaseline="middle";
+  g.fillText(`${p.t}  #${p.id}`, c.width/2, c.height/2);
+  const t=new THREE.CanvasTexture(c); t.anisotropy=4; return t;
+}
+function init3d(){
+  if(!window.THREE){host.innerHTML='<p class="muted" style="padding:16px">3D se nenačetlo – plánek a tabulka níže platí.</p>';return;}
+  renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); host.appendChild(renderer.domElement);
+  scene=new THREE.Scene(); scene.background=new THREE.Color(css("--scene"));
+  camera=new THREE.PerspectiveCamera(35,1,0.1,200);
+  controls=new THREE.OrbitControls(camera,renderer.domElement); controls.enableDamping=true;
+  scene.add(new THREE.HemisphereLight(0xffffff,0x667788,0.85)); const dl=new THREE.DirectionalLight(0xffffff,0.55); dl.position.set(-6,12,8); scene.add(dl);
+  // truck: x along length (0 = kabina), z across, y up
+  const floor=new THREE.Mesh(new THREE.BoxGeometry(TRUCK.L,0.06,TRUCK.W),new THREE.MeshLambertMaterial({color:css("--floor")})); floor.position.set(TRUCK.L/2,-0.03,TRUCK.W/2); scene.add(floor);
+  const box=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(TRUCK0.L,TRUCK.H,TRUCK.W)),new THREE.LineBasicMaterial({color:css("--wall")})); box.position.set(TRUCK0.L/2,TRUCK.H/2,TRUCK.W/2); scene.add(box);
+  if(over&&TRUCK.L>TRUCK0.L){const ov=new THREE.Mesh(new THREE.BoxGeometry(TRUCK.L-TRUCK0.L,0.07,TRUCK.W),new THREE.MeshLambertMaterial({color:0xe5484d,transparent:true,opacity:.45})); ov.position.set(TRUCK0.L+(TRUCK.L-TRUCK0.L)/2,-0.02,TRUCK.W/2); scene.add(ov);}
+  const fw=new THREE.Mesh(new THREE.PlaneGeometry(TRUCK.W,TRUCK.H),new THREE.MeshLambertMaterial({color:css("--wall"),transparent:true,opacity:.25,side:THREE.DoubleSide})); fw.rotation.y=Math.PI/2; fw.position.set(0,TRUCK.H/2,TRUCK.W/2); scene.add(fw);
+  const cab=new THREE.Mesh(new THREE.BoxGeometry(2.2,2.9,2.48),new THREE.MeshLambertMaterial({color:0x2f5fb3})); cab.position.set(-1.5,1.45,TRUCK.W/2); scene.add(cab);
+  // ložné metry na podlaze
+  let x=0; D.cols.forEach(c=>{x+=c; const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x,0.005,0),new THREE.Vector3(x,0.005,TRUCK.W)]),new THREE.LineBasicMaterial({color:css("--accent")})); scene.add(ln);});
+  D.placed.forEach(p=>{
+    const geo=new THREE.BoxGeometry(p.l-0.02,p.h-0.01,0.78);
+    const side=labelTex(p,p.l,p.h), top=labelTex(p,p.l,0.8);
+    const plain=()=>new THREE.MeshLambertMaterial({color:col(p.t)});
+    const mats=[plain(),plain(),new THREE.MeshLambertMaterial({map:top}),plain(),new THREE.MeshLambertMaterial({map:side}),new THREE.MeshLambertMaterial({map:side})];
+    const m=new THREE.Mesh(geo,mats); m.position.set(p.x+p.l/2, p.z+p.h/2, OFFY+p.y+0.4);
+    const e=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:0x14181c,transparent:true,opacity:.7})); m.add(e);
+    m.userData={p,edge:e}; scene.add(m); meshes.push(m);
+  });
+  const ray=new THREE.Raycaster(), v=new THREE.Vector2(); let down=null;
+  renderer.domElement.addEventListener("pointerdown",e=>down=[e.clientX,e.clientY]);
+  renderer.domElement.addEventListener("pointerup",e=>{ if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>5) return;
+    const r=renderer.domElement.getBoundingClientRect(); v.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+    ray.setFromCamera(v,camera); const hit=ray.intersectObjects(meshes,false)[0]; select(hit?hit.object.userData.p:null);});
+  new ResizeObserver(resize).observe(host); resize(); setView("iso");
+  const my=++LOOP; (function loop(){ if(my!==LOOP){renderer.dispose();return;} requestAnimationFrame(loop); controls.update(); renderer.render(scene,camera);})();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>scene.background=new THREE.Color(css("--scene")));
+}
+function resize(){const w=host.clientWidth,h=host.clientHeight; renderer.setSize(w,h); camera.aspect=w/h; camera.updateProjectionMatrix();}
+function setView(name){
+  if(!camera) return; const cx=Math.max(D.lp,4)/2, c=new THREE.Vector3(cx,1,TRUCK.W/2), Ld=Math.max(D.lp,5);
+  const pos={iso:[cx+Ld*1.5,Ld*1.35,TRUCK.W/2+Ld*2.0], top:[cx,Ld*2.3,TRUCK.W/2+0.02], side:[cx,1.2,TRUCK.W/2+Ld*1.9], back:[cx+Ld*1.6+4,1.4,TRUCK.W/2], front:[-Ld*1.2-3,2.6,TRUCK.W/2]}[name];
+  camera.position.set(...pos); controls.target.copy(c); camera.lookAt(c); controls.update();
+  document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("on",b.dataset.view===name));
+}
+document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+init3d();
+}
+const tabs=document.getElementById("tabs");
+function pick(i){ tabs.querySelectorAll("button").forEach((b,j)=>b.classList.toggle("on",j===i)); render(ALL[i]); }
+ALL.forEach((d,i)=>{const b=document.createElement("button"); b.type="button"; b.textContent=d.name+" · "+d.pallets+" PAL"; b.onclick=()=>pick(i); tabs.appendChild(b);});
+pick(0);
+</script>
+
+</body></html>
